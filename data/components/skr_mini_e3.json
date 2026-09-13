@@ -1,0 +1,61 @@
+{
+  "type": "skr_mini_e3",
+  "label": "Controller Board (BTT SKR Mini E3, 32-bit)",
+  "category": "3d-printer",
+  "description": "Models a modern all-in-one 32-bit controller board (e.g. BigTreeTech SKR Mini E3) with onboard stepper drivers folded into the board's motor pins, the same modeling approach as controller_board uses for RAMPS+Mega. Differs from controller_board in running a single extruder off the board directly, a dedicated BLTouch-style probe connector, and a serial TFT screen connector instead of a parallel LCD bus.",
+  "pins": [
+    { "name": "PSU_24V", "label": "Main power input +", "group": "power" },
+    { "name": "PSU_GND", "label": "Main power input -", "group": "power" },
+
+    { "name": "X_MOTOR_A+", "label": "X motor coil A +", "group": "X axis" },
+    { "name": "X_MOTOR_A-", "label": "X motor coil A -", "group": "X axis" },
+    { "name": "X_MOTOR_B+", "label": "X motor coil B +", "group": "X axis" },
+    { "name": "X_MOTOR_B-", "label": "X motor coil B -", "group": "X axis" },
+    { "name": "X_ENDSTOP_SIG", "label": "X endstop signal", "group": "X axis" },
+
+    { "name": "Y_MOTOR_A+", "label": "Y motor coil A +", "group": "Y axis" },
+    { "name": "Y_MOTOR_A-", "label": "Y motor coil A -", "group": "Y axis" },
+    { "name": "Y_MOTOR_B+", "label": "Y motor coil B +", "group": "Y axis" },
+    { "name": "Y_MOTOR_B-", "label": "Y motor coil B -", "group": "Y axis" },
+    { "name": "Y_ENDSTOP_SIG", "label": "Y endstop signal", "group": "Y axis" },
+
+    { "name": "Z_MOTOR_A+", "label": "Z motor coil A +", "group": "Z axis" },
+    { "name": "Z_MOTOR_A-", "label": "Z motor coil A -", "group": "Z axis" },
+    { "name": "Z_MOTOR_B+", "label": "Z motor coil B +", "group": "Z axis" },
+    { "name": "Z_MOTOR_B-", "label": "Z motor coil B -", "group": "Z axis" },
+    { "name": "Z_ENDSTOP_SIG", "label": "Z endstop signal", "group": "Z axis" },
+
+    { "name": "ENDSTOPS_VCC", "label": "Endstop power (shared)", "group": "endstops" },
+    { "name": "ENDSTOPS_GND", "label": "Endstop ground (shared)", "group": "endstops" },
+
+    { "name": "E0_MOTOR_A+", "label": "Extruder motor coil A +", "group": "extruder" },
+    { "name": "E0_MOTOR_A-", "label": "Extruder motor coil A -", "group": "extruder" },
+    { "name": "E0_MOTOR_B+", "label": "Extruder motor coil B +", "group": "extruder" },
+    { "name": "E0_MOTOR_B-", "label": "Extruder motor coil B -", "group": "extruder" },
+
+    { "name": "HOTEND_HEATER+", "label": "Hotend heater output +", "group": "hotend" },
+    { "name": "HOTEND_HEATER-", "label": "Hotend heater output -", "group": "hotend" },
+    { "name": "HOTEND_THERMISTOR+", "label": "Hotend thermistor input +", "group": "hotend" },
+    { "name": "HOTEND_THERMISTOR-", "label": "Hotend thermistor input -", "group": "hotend" },
+
+    { "name": "BED_HEATER+", "label": "Bed heater output +", "group": "bed" },
+    { "name": "BED_HEATER-", "label": "Bed heater output -", "group": "bed" },
+    { "name": "BED_THERMISTOR+", "label": "Bed thermistor input +", "group": "bed" },
+    { "name": "BED_THERMISTOR-", "label": "Bed thermistor input -", "group": "bed" },
+
+    { "name": "FAN0_12V", "label": "Part-cooling fan output +", "group": "fans" },
+    { "name": "FAN0_GND", "label": "Part-cooling fan output -", "group": "fans" },
+    { "name": "FAN1_12V", "label": "Hotend fan output +", "group": "fans" },
+    { "name": "FAN1_GND", "label": "Hotend fan output -", "group": "fans" },
+
+    { "name": "PROBE_VCC", "label": "Probe power (e.g. BLTouch)", "group": "probe" },
+    { "name": "PROBE_GND", "label": "Probe ground", "group": "probe" },
+    { "name": "PROBE_CTRL", "label": "Probe servo control signal", "group": "probe" },
+    { "name": "PROBE_ZSIG", "label": "Probe-triggered signal", "group": "probe" },
+
+    { "name": "TFT_VCC", "label": "Screen power", "group": "screen" },
+    { "name": "TFT_GND", "label": "Screen ground", "group": "screen" },
+    { "name": "TFT_TX", "label": "Screen UART transmit", "group": "screen" },
+    { "name": "TFT_RX", "label": "Screen UART receive", "group": "screen" }
+  ]
+}

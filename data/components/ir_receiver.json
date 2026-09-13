@@ -1,0 +1,11 @@
+{
+  "type": "ir_receiver",
+  "label": "IR Receiver Module",
+  "category": "sensor",
+  "description": "3-pin infrared receiver module (e.g. VS1838B/HX1838), for reading remote-control signals.",
+  "pins": [
+    { "name": "VCC", "label": "Power (3.3V-5V)" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "OUT", "label": "Demodulated signal output" }
+  ]
+}

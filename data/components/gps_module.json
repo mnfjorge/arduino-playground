@@ -1,0 +1,13 @@
+{
+  "type": "gps_module",
+  "label": "GPS Module (NEO-6M-style)",
+  "category": "expansion",
+  "description": "UART GPS receiver module (e.g. NEO-6M/NEO-M8N), providing NMEA position/time data.",
+  "pins": [
+    { "name": "VCC", "label": "Power (3.3V-5V)" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "TX", "label": "UART transmit (module to host)" },
+    { "name": "RX", "label": "UART receive (host to module)" },
+    { "name": "PPS", "label": "Pulse-per-second timing output" }
+  ]
+}
