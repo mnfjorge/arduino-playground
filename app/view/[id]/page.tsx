@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { ConnectionsTable, type ConnectionRow } from "@/components/diagram/connections-table";
 import { InteractiveDiagram } from "@/components/diagram/interactive-diagram";
 import { getComponentDefinition, type ComponentDefinition } from "@/lib/components/registry";
 import { layoutDiagram } from "@/lib/diagram/layout";
@@ -45,7 +46,7 @@ export default async function ViewDiagramPage({ params }: PageProps<"/view/[id]"
 
   const componentById = new Map(diagram.components.map((component) => [component.id, component]));
 
-  const connectionRows = diagram.connections
+  const connectionRows: ConnectionRow[] = diagram.connections
     .flatMap((connection) => {
       const from = componentById.get(connection.from.component);
       const to = componentById.get(connection.to.component);
@@ -64,7 +65,8 @@ export default async function ViewDiagramPage({ params }: PageProps<"/view/[id]"
         },
       ];
     })
-    .sort((a, b) => a.component.localeCompare(b.component) || a.pin.localeCompare(b.pin));
+    .sort((a, b) => a.component.localeCompare(b.component) || a.pin.localeCompare(b.pin))
+    .map((row, index) => ({ ...row, key: `${row.component}-${row.pin}-${row.otherComponent}-${row.otherPin}-${index}` }));
 
   return (
     <div className="min-h-full bg-background text-foreground">
@@ -95,40 +97,8 @@ export default async function ViewDiagramPage({ params }: PageProps<"/view/[id]"
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold">Connections</h2>
-          <div className="mt-3 overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900">
-                <tr>
-                  <th className="px-4 py-2 font-medium">Component</th>
-                  <th className="px-4 py-2 font-medium">Pin</th>
-                  <th className="px-4 py-2 font-medium">Connected to</th>
-                  <th className="px-4 py-2 font-medium">Pin</th>
-                </tr>
-              </thead>
-              <tbody>
-                {connectionRows.length === 0 ? (
-                  <tr>
-                    <td className="px-4 py-2 text-zinc-500" colSpan={4}>
-                      No connections.
-                    </td>
-                  </tr>
-                ) : (
-                  connectionRows.map((row, index) => (
-                    <tr
-                      key={`${row.component}-${row.pin}-${row.otherComponent}-${row.otherPin}-${index}`}
-                      className="border-b border-zinc-200 last:border-0 dark:border-zinc-800"
-                    >
-                      <td className="px-4 py-2">{row.component}</td>
-                      <td className="px-4 py-2 font-mono">{row.pin}</td>
-                      <td className="px-4 py-2">{row.otherComponent}</td>
-                      <td className="px-4 py-2 font-mono">{row.otherPin}</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+          <h2 className="mb-3 text-lg font-semibold">Connections</h2>
+          <ConnectionsTable diagramId={id} rows={connectionRows} />
         </section>
 
         <section>
