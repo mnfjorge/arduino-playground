@@ -4,6 +4,8 @@ import { Fragment, useCallback, useMemo, useState, useSyncExternalStore } from "
 
 export interface ConnectionRow {
   key: string;
+  /** Shared by both reciprocal rows for the same physical connection. */
+  connectionId: string;
   component: string;
   pin: string;
   otherComponent: string;
@@ -92,8 +94,8 @@ export function ConnectionsTable({ diagramId, rows }: ConnectionsTableProps) {
   }, [completedRaw]);
 
   const toggleRow = useCallback(
-    (key: string) => {
-      writeCompleted(diagramId, { ...completed, [key]: !completed[key] });
+    (connectionId: string) => {
+      writeCompleted(diagramId, { ...completed, [connectionId]: !completed[connectionId] });
     },
     [diagramId, completed],
   );
@@ -107,13 +109,14 @@ export function ConnectionsTable({ diagramId, rows }: ConnectionsTableProps) {
   }, []);
 
   const groups = useMemo(() => groupByComponent(rows), [rows]);
-  const completedCount = rows.filter((row) => completed[row.key]).length;
+  const connectionIds = useMemo(() => [...new Set(rows.map((row) => row.connectionId))], [rows]);
+  const completedCount = connectionIds.filter((id) => completed[id]).length;
 
   return (
     <div>
       <div className="mb-2 flex items-center justify-between gap-4">
         <p className="text-sm text-zinc-500">
-          {completedCount} of {rows.length} connections completed.
+          {completedCount} of {connectionIds.length} connections completed.
         </p>
         <button
           type="button"
@@ -145,7 +148,7 @@ export function ConnectionsTable({ diagramId, rows }: ConnectionsTableProps) {
             ) : (
               groups.map((group) => {
                 const isCollapsed = collapsed[group.component] ?? false;
-                const groupCompletedCount = group.rows.filter((row) => completed[row.key]).length;
+                const groupCompletedCount = group.rows.filter((row) => completed[row.connectionId]).length;
                 return (
                   <Fragment key={group.component}>
                     <tr className="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900/60">
@@ -171,7 +174,7 @@ export function ConnectionsTable({ diagramId, rows }: ConnectionsTableProps) {
                     </tr>
                     {!isCollapsed &&
                       group.rows.map((row) => {
-                        const isCompleted = completed[row.key] ?? false;
+                        const isCompleted = completed[row.connectionId] ?? false;
                         return (
                           <tr
                             key={row.key}
@@ -183,7 +186,7 @@ export function ConnectionsTable({ diagramId, rows }: ConnectionsTableProps) {
                               <input
                                 type="checkbox"
                                 checked={isCompleted}
-                                onChange={() => toggleRow(row.key)}
+                                onChange={() => toggleRow(row.connectionId)}
                                 aria-label={`Mark ${row.component} ${row.pin} to ${row.otherComponent} ${row.otherPin} as completed`}
                                 className="size-4 accent-emerald-600"
                               />
