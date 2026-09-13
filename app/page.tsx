@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { z } from "zod";
 import { toolDefinitions } from "@/lib/mcp/tool-definitions";
 import { getBaseUrl } from "@/lib/site-url";
@@ -70,6 +71,13 @@ export default function Home() {
             automatically — there&apos;s no canvas or position to configure. Call{" "}
             <code className="font-mono text-sm">list_component_types</code> first to see every available component
             type and its pins.
+          </p>
+          <p className="mt-4 text-zinc-600 dark:text-zinc-400">
+            See the{" "}
+            <Link href="/components" className="underline hover:text-zinc-700 dark:hover:text-zinc-300">
+              full list of supported components
+            </Link>{" "}
+            for a human-readable reference.
           </p>
         </section>
       </main>
