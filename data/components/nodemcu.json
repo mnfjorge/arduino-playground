@@ -1,0 +1,25 @@
+{
+  "type": "nodemcu",
+  "label": "NodeMCU (ESP8266)",
+  "category": "microcontroller",
+  "description": "Standard NodeMCU v1.0 devkit pin labels as silkscreened on the board. Duplicate physical 3V3/GND pins are collapsed into single logical pins.",
+  "pins": [
+    { "name": "3V3", "label": "3.3V power" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "VIN", "label": "5V input" },
+    { "name": "RST", "label": "Reset" },
+    { "name": "EN", "label": "Chip enable" },
+    { "name": "A0", "label": "Analog input" },
+    { "name": "D0", "label": "GPIO16" },
+    { "name": "D1", "label": "GPIO5" },
+    { "name": "D2", "label": "GPIO4" },
+    { "name": "D3", "label": "GPIO0" },
+    { "name": "D4", "label": "GPIO2" },
+    { "name": "D5", "label": "GPIO14" },
+    { "name": "D6", "label": "GPIO12" },
+    { "name": "D7", "label": "GPIO13" },
+    { "name": "D8", "label": "GPIO15" },
+    { "name": "RX", "label": "UART RX" },
+    { "name": "TX", "label": "UART TX" }
+  ]
+}

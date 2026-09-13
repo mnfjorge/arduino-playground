@@ -1,0 +1,62 @@
+{
+  "type": "controller_board",
+  "label": "Controller Board (RAMPS 1.4 + Arduino Mega)",
+  "category": "3d-printer",
+  "description": "Models the RAMPS 1.4 shield and its Arduino Mega 2560 as one logical board, and folds each plug-in stepper driver (A4988/DRV8825) into the board's motor pins. This exposes the connectors a person actually wires (motor cables, endstop cables, heater/thermistor wires, fan, LCD ribbon) instead of the raw Mega header pins or driver breakout pins, keeping the wiring graph shallow. Endstop and LCD power/ground are modeled as shared pins since they're the same electrical net across axes/connectors on the real board.",
+  "pins": [
+    { "name": "PSU_12V", "label": "Main power input +", "group": "power" },
+    { "name": "PSU_GND", "label": "Main power input -", "group": "power" },
+
+    { "name": "X_MOTOR_A+", "label": "X motor coil A +", "group": "X axis" },
+    { "name": "X_MOTOR_A-", "label": "X motor coil A -", "group": "X axis" },
+    { "name": "X_MOTOR_B+", "label": "X motor coil B +", "group": "X axis" },
+    { "name": "X_MOTOR_B-", "label": "X motor coil B -", "group": "X axis" },
+    { "name": "X_ENDSTOP_SIG", "label": "X endstop signal", "group": "X axis" },
+
+    { "name": "Y_MOTOR_A+", "label": "Y motor coil A +", "group": "Y axis" },
+    { "name": "Y_MOTOR_A-", "label": "Y motor coil A -", "group": "Y axis" },
+    { "name": "Y_MOTOR_B+", "label": "Y motor coil B +", "group": "Y axis" },
+    { "name": "Y_MOTOR_B-", "label": "Y motor coil B -", "group": "Y axis" },
+    { "name": "Y_ENDSTOP_SIG", "label": "Y endstop signal", "group": "Y axis" },
+
+    { "name": "Z_MOTOR_A+", "label": "Z motor coil A +", "group": "Z axis" },
+    { "name": "Z_MOTOR_A-", "label": "Z motor coil A -", "group": "Z axis" },
+    { "name": "Z_MOTOR_B+", "label": "Z motor coil B +", "group": "Z axis" },
+    { "name": "Z_MOTOR_B-", "label": "Z motor coil B -", "group": "Z axis" },
+    { "name": "Z_ENDSTOP_SIG", "label": "Z endstop signal", "group": "Z axis" },
+
+    { "name": "ENDSTOPS_VCC", "label": "Endstop power (shared)", "group": "endstops" },
+    { "name": "ENDSTOPS_GND", "label": "Endstop ground (shared)", "group": "endstops" },
+
+    { "name": "E0_MOTOR_A+", "label": "Extruder motor coil A +", "group": "extruder" },
+    { "name": "E0_MOTOR_A-", "label": "Extruder motor coil A -", "group": "extruder" },
+    { "name": "E0_MOTOR_B+", "label": "Extruder motor coil B +", "group": "extruder" },
+    { "name": "E0_MOTOR_B-", "label": "Extruder motor coil B -", "group": "extruder" },
+
+    { "name": "HOTEND_HEATER+", "label": "Hotend heater output +", "group": "hotend" },
+    { "name": "HOTEND_HEATER-", "label": "Hotend heater output -", "group": "hotend" },
+    { "name": "HOTEND_THERMISTOR+", "label": "Hotend thermistor input +", "group": "hotend" },
+    { "name": "HOTEND_THERMISTOR-", "label": "Hotend thermistor input -", "group": "hotend" },
+
+    { "name": "BED_HEATER+", "label": "Bed heater output +", "group": "bed" },
+    { "name": "BED_HEATER-", "label": "Bed heater output -", "group": "bed" },
+    { "name": "BED_THERMISTOR+", "label": "Bed thermistor input +", "group": "bed" },
+    { "name": "BED_THERMISTOR-", "label": "Bed thermistor input -", "group": "bed" },
+
+    { "name": "FAN_12V", "label": "Fan output +", "group": "fan" },
+    { "name": "FAN_GND", "label": "Fan output -", "group": "fan" },
+
+    { "name": "LCD_VCC", "label": "LCD power", "group": "LCD" },
+    { "name": "LCD_GND", "label": "LCD ground", "group": "LCD" },
+    { "name": "LCD_VO", "label": "LCD contrast adjust", "group": "LCD" },
+    { "name": "LCD_RS", "label": "LCD register select", "group": "LCD" },
+    { "name": "LCD_RW", "label": "LCD read/write", "group": "LCD" },
+    { "name": "LCD_EN", "label": "LCD enable", "group": "LCD" },
+    { "name": "LCD_D4", "label": "LCD data bit 4", "group": "LCD" },
+    { "name": "LCD_D5", "label": "LCD data bit 5", "group": "LCD" },
+    { "name": "LCD_D6", "label": "LCD data bit 6", "group": "LCD" },
+    { "name": "LCD_D7", "label": "LCD data bit 7", "group": "LCD" },
+    { "name": "LCD_BACKLIGHT+", "label": "LCD backlight anode", "group": "LCD" },
+    { "name": "LCD_BACKLIGHT-", "label": "LCD backlight cathode", "group": "LCD" }
+  ]
+}

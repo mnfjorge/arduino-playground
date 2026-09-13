@@ -1,0 +1,12 @@
+{
+  "type": "stepper_motor",
+  "label": "Stepper Motor",
+  "category": "actuator",
+  "description": "Standard 4-wire bipolar stepper motor (e.g. NEMA17), as used for X/Y/Z axes and extruder drive on i3-style printers.",
+  "pins": [
+    { "name": "A+", "label": "Coil A +" },
+    { "name": "A-", "label": "Coil A -" },
+    { "name": "B+", "label": "Coil B +" },
+    { "name": "B-", "label": "Coil B -" }
+  ]
+}

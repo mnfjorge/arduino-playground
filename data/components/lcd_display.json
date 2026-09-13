@@ -1,0 +1,20 @@
+{
+  "type": "lcd_display",
+  "label": "Character LCD",
+  "category": "display",
+  "description": "Generic HD44780-style character LCD wired in 4-bit mode (RS, EN, D4-D7), the standard hobbyist wiring pattern.",
+  "pins": [
+    { "name": "VCC", "label": "Power" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "VO", "label": "Contrast adjust" },
+    { "name": "RS", "label": "Register select" },
+    { "name": "RW", "label": "Read/write" },
+    { "name": "EN", "label": "Enable" },
+    { "name": "D4", "label": "Data bit 4" },
+    { "name": "D5", "label": "Data bit 5" },
+    { "name": "D6", "label": "Data bit 6" },
+    { "name": "D7", "label": "Data bit 7" },
+    { "name": "LED+", "label": "Backlight anode" },
+    { "name": "LED-", "label": "Backlight cathode" }
+  ]
+}

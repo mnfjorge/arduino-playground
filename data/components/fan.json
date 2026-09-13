@@ -1,0 +1,10 @@
+{
+  "type": "fan",
+  "label": "Fan",
+  "category": "actuator",
+  "description": "Generic 2-pin 12V/24V DC fan (part-cooling or hotend fan).",
+  "pins": [
+    { "name": "VCC", "label": "Power" },
+    { "name": "GND", "label": "Ground" }
+  ]
+}

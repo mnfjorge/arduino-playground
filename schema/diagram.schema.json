@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arduino-playground.local/schema/diagram.schema.json",
+  "title": "Electronics Diagram",
+  "description": "The JSON notation an LLM creates/edits via MCP tools. Layout (component placement and wire routing) is computed automatically from this structure, so it intentionally has no position/canvas fields.",
+  "type": "object",
+  "required": ["id", "components", "connections"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "UUID for this diagram. Must match the diagramId used in MCP tool calls and the /view/{id} page."
+    },
+    "title": {
+      "type": "string",
+      "description": "Optional human-readable name for the diagram."
+    },
+    "components": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/component" }
+    },
+    "connections": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/connection" }
+    }
+  },
+  "$defs": {
+    "component": {
+      "type": "object",
+      "required": ["id", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unique identifier for this component instance within the diagram, e.g. 'esp32-1'. Referenced by connections."
+        },
+        "type": {
+          "type": "string",
+          "description": "Component type key. Must match the 'type' of a definition in data/components/*.json (discoverable via the list_component_types MCP tool), e.g. 'esp32', 'nodemcu', 'hall_sensor'."
+        },
+        "label": {
+          "type": "string",
+          "description": "Optional display label override, e.g. 'X-axis endstop'."
+        }
+      }
+    },
+    "connection": {
+      "type": "object",
+      "required": ["from", "to"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Optional identifier for this connection."
+        },
+        "from": { "$ref": "#/$defs/pinRef" },
+        "to": { "$ref": "#/$defs/pinRef" }
+      }
+    },
+    "pinRef": {
+      "type": "object",
+      "required": ["component", "pin"],
+      "additionalProperties": false,
+      "properties": {
+        "component": {
+          "type": "string",
+          "description": "References a component's 'id' field in this diagram."
+        },
+        "pin": {
+          "type": "string",
+          "description": "Pin name. Must match one of the pins defined for that component instance's type."
+        }
+      }
+    }
+  }
+}

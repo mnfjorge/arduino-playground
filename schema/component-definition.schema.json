@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arduino-playground.local/schema/component-definition.schema.json",
+  "title": "Component Definition",
+  "description": "Shape of each file in data/components/*.json. Each file describes one placeable component type: its pins and metadata. The filename (without extension) must match the 'type' field.",
+  "type": "object",
+  "required": ["type", "label", "category", "pins"],
+  "additionalProperties": false,
+  "properties": {
+    "type": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "description": "Unique machine-readable identifier used in diagram JSON, e.g. 'nodemcu'."
+    },
+    "label": {
+      "type": "string",
+      "description": "Human-readable display name, e.g. 'NodeMCU (ESP8266)'."
+    },
+    "category": {
+      "type": "string",
+      "enum": ["microcontroller", "sensor", "actuator", "power", "display", "3d-printer"],
+      "description": "Broad grouping, mainly for organizing list_component_types output."
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional free-text notes about this component or modeling decisions/simplifications."
+    },
+    "pins": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/pin" }
+    }
+  },
+  "$defs": {
+    "pin": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_+\\-]+$",
+          "description": "Unique (within this component type) pin identifier used in connections, e.g. 'GND', 'D1', 'A+'."
+        },
+        "label": {
+          "type": "string",
+          "description": "Optional human-readable pin description, e.g. 'Coil A +'."
+        },
+        "group": {
+          "type": "string",
+          "description": "Optional grouping hint for readability, e.g. 'X axis', 'LCD interface'. Not used for layout."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "type": "heated_bed",
+  "label": "Heated Bed",
+  "category": "3d-printer",
+  "description": "Modeled as one assembly combining the bed heater and its thermistor.",
+  "pins": [
+    { "name": "HEATER+", "label": "Bed heater +" },
+    { "name": "HEATER-", "label": "Bed heater -" },
+    { "name": "THERMISTOR+", "label": "Thermistor +" },
+    { "name": "THERMISTOR-", "label": "Thermistor -" }
+  ]
+}
