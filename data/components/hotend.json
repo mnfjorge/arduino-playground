@@ -1,0 +1,12 @@
+{
+  "type": "hotend",
+  "label": "Hotend",
+  "category": "3d-printer",
+  "description": "Modeled as one assembly combining the heater cartridge and thermistor, since they're always installed and wired together.",
+  "pins": [
+    { "name": "HEATER+", "label": "Heater cartridge +" },
+    { "name": "HEATER-", "label": "Heater cartridge -" },
+    { "name": "THERMISTOR+", "label": "Thermistor +" },
+    { "name": "THERMISTOR-", "label": "Thermistor -" }
+  ]
+}

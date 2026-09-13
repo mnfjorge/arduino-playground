@@ -1,0 +1,11 @@
+{
+  "type": "endstop_switch",
+  "label": "Endstop Switch",
+  "category": "3d-printer",
+  "description": "Mechanical limit switch used to home an axis, wired as a 3-pin JST connector (matches how RAMPS-style endstop headers are wired).",
+  "pins": [
+    { "name": "SIG", "label": "Signal" },
+    { "name": "VCC", "label": "Power" },
+    { "name": "GND", "label": "Ground" }
+  ]
+}

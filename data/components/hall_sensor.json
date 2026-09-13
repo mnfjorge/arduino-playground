@@ -1,0 +1,11 @@
+{
+  "type": "hall_sensor",
+  "label": "Hall Effect Sensor",
+  "category": "sensor",
+  "description": "Generic 3-pin hall effect sensor module (e.g. A3144, used as an endstop replacement on some 3D printers).",
+  "pins": [
+    { "name": "VCC", "label": "Power" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "OUT", "label": "Signal output" }
+  ]
+}

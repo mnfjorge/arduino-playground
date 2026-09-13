@@ -1,0 +1,13 @@
+{
+  "type": "power_supply",
+  "label": "Power Supply Unit",
+  "category": "power",
+  "description": "Mains-to-DC power supply (e.g. an LRS-350-12) providing the printer's main DC rail.",
+  "pins": [
+    { "name": "AC_L", "label": "Mains live" },
+    { "name": "AC_N", "label": "Mains neutral" },
+    { "name": "AC_GND", "label": "Mains earth" },
+    { "name": "DC+", "label": "DC output +" },
+    { "name": "DC-", "label": "DC output -" }
+  ]
+}
