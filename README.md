@@ -41,6 +41,8 @@ This project includes the [`@vercel/blob`](https://vercel.com/docs/storage/verce
 
 To use it locally, create a Blob store from your Vercel project's Storage tab, copy the generated `BLOB_READ_WRITE_TOKEN`, and add it to a `.env.local` file (see `.env.example`). When deployed on Vercel with a Blob store linked, this variable is set automatically.
 
+A Blob store is provisioned as either public or private, and reads/writes must declare a matching access level or the SDK rejects them ("Cannot use public/private access on a public/private store"). Set `BLOB_ACCESS` to whichever your store actually is — it defaults to `private`, Vercel's current default for new stores. Note that a private store's raw Blob URLs aren't fetchable by a plain browser request (no auth) — that's why `render_diagram` points at this app's own `/view/{id}` page rather than the Blob URL directly.
+
 ### File storage abstraction
 
 `lib/file-storage.ts` exposes `uploadFile`, `downloadFile`, `deleteFile`, and `listFiles` helpers that hide whether files live in Vercel Blob or on local disk. They use Vercel Blob by default. Set `USE_LOCAL_FILE_STORAGE=true` in `.env.local` to have them read/write the `./temp` folder instead, so you can develop without a Blob store. `temp/` is gitignored (its contents aren't committed).

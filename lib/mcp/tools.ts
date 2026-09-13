@@ -66,7 +66,15 @@ export async function updateDiagram(input: DiagramInput): Promise<ToolResult> {
 }
 
 export type RenderResult =
-  | { ok: true; diagramId: string; title?: string; imageUrl: string; viewUrl: string; jpeg: Buffer }
+  | {
+      ok: true;
+      diagramId: string;
+      title?: string;
+      /** Raw Blob storage location, not a browser-accessible URL when the store is private (see getBlobAccess). Show viewUrl instead. */
+      imageUrl: string;
+      viewUrl: string;
+      jpeg: Buffer;
+    }
   | { ok: false; errors: string[] };
 
 /** Renders a diagram to JPEG and stores it, returning the public view URL. */
