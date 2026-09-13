@@ -1,0 +1,24 @@
+{
+  "type": "stepper_driver",
+  "label": "Stepper Driver (A4988/DRV8825-style)",
+  "category": "driver",
+  "description": "Standard pinout shared by A4988, DRV8825 and similar Pololu-style stepper driver breakout boards, for wiring a stepper motor outside of a controller_board assembly.",
+  "pins": [
+    { "name": "VMOT", "label": "Motor supply +", "group": "power" },
+    { "name": "GND_MOTOR", "label": "Motor supply -", "group": "power" },
+    { "name": "VDD", "label": "Logic power (3.3V-5V)", "group": "power" },
+    { "name": "GND_LOGIC", "label": "Logic ground", "group": "power" },
+    { "name": "STEP", "label": "Step pulse input", "group": "control" },
+    { "name": "DIR", "label": "Direction input", "group": "control" },
+    { "name": "EN", "label": "Enable (active low)", "group": "control" },
+    { "name": "MS1", "label": "Microstep select 1", "group": "control" },
+    { "name": "MS2", "label": "Microstep select 2", "group": "control" },
+    { "name": "MS3", "label": "Microstep select 3", "group": "control" },
+    { "name": "RESET", "label": "Reset (active low)", "group": "control" },
+    { "name": "SLEEP", "label": "Sleep (active low)", "group": "control" },
+    { "name": "1A", "label": "Coil A +", "group": "motor" },
+    { "name": "1B", "label": "Coil A -", "group": "motor" },
+    { "name": "2A", "label": "Coil B +", "group": "motor" },
+    { "name": "2B", "label": "Coil B -", "group": "motor" }
+  ]
+}

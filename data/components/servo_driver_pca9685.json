@@ -1,0 +1,30 @@
+{
+  "type": "servo_driver_pca9685",
+  "label": "PCA9685 16-Channel PWM/Servo Driver",
+  "category": "driver",
+  "description": "I2C-controlled 16-channel PWM driver breakout, commonly used to drive many servos (or LEDs) from one I2C bus.",
+  "pins": [
+    { "name": "VCC", "label": "Logic power", "group": "power" },
+    { "name": "GND", "label": "Ground", "group": "power" },
+    { "name": "V+", "label": "Servo power rail (separate from logic)", "group": "power" },
+    { "name": "SCL", "label": "I2C clock", "group": "control" },
+    { "name": "SDA", "label": "I2C data", "group": "control" },
+    { "name": "OE", "label": "Output enable (active low)", "group": "control" },
+    { "name": "CH0", "label": "Channel 0 PWM output", "group": "channels" },
+    { "name": "CH1", "label": "Channel 1 PWM output", "group": "channels" },
+    { "name": "CH2", "label": "Channel 2 PWM output", "group": "channels" },
+    { "name": "CH3", "label": "Channel 3 PWM output", "group": "channels" },
+    { "name": "CH4", "label": "Channel 4 PWM output", "group": "channels" },
+    { "name": "CH5", "label": "Channel 5 PWM output", "group": "channels" },
+    { "name": "CH6", "label": "Channel 6 PWM output", "group": "channels" },
+    { "name": "CH7", "label": "Channel 7 PWM output", "group": "channels" },
+    { "name": "CH8", "label": "Channel 8 PWM output", "group": "channels" },
+    { "name": "CH9", "label": "Channel 9 PWM output", "group": "channels" },
+    { "name": "CH10", "label": "Channel 10 PWM output", "group": "channels" },
+    { "name": "CH11", "label": "Channel 11 PWM output", "group": "channels" },
+    { "name": "CH12", "label": "Channel 12 PWM output", "group": "channels" },
+    { "name": "CH13", "label": "Channel 13 PWM output", "group": "channels" },
+    { "name": "CH14", "label": "Channel 14 PWM output", "group": "channels" },
+    { "name": "CH15", "label": "Channel 15 PWM output", "group": "channels" }
+  ]
+}

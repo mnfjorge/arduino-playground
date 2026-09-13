@@ -1,0 +1,11 @@
+{
+  "type": "transistor_bjt",
+  "label": "Bipolar Junction Transistor (BJT)",
+  "category": "passive",
+  "description": "Generic discrete NPN/PNP bipolar transistor, e.g. for switching a small load or as part of a driver stage.",
+  "pins": [
+    { "name": "BASE", "label": "Base" },
+    { "name": "COLLECTOR", "label": "Collector" },
+    { "name": "EMITTER", "label": "Emitter" }
+  ]
+}

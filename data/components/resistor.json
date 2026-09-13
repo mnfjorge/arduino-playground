@@ -1,0 +1,10 @@
+{
+  "type": "resistor",
+  "label": "Resistor",
+  "category": "passive",
+  "description": "Generic fixed resistor, e.g. an LED current-limiting resistor or a pull-up/pull-down.",
+  "pins": [
+    { "name": "T1", "label": "Terminal 1" },
+    { "name": "T2", "label": "Terminal 2" }
+  ]
+}

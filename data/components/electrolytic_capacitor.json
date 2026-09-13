@@ -1,0 +1,10 @@
+{
+  "type": "electrolytic_capacitor",
+  "label": "Electrolytic Capacitor",
+  "category": "passive",
+  "description": "Polarized electrolytic capacitor, e.g. for power-rail smoothing.",
+  "pins": [
+    { "name": "+", "label": "Positive terminal" },
+    { "name": "-", "label": "Negative terminal" }
+  ]
+}

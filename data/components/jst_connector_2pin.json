@@ -1,0 +1,10 @@
+{
+  "type": "jst_connector_2pin",
+  "label": "JST 2-Pin Connector",
+  "category": "connector",
+  "description": "Generic 2-pin JST-XH/PH style connector pair, e.g. for a battery or sensor cable.",
+  "pins": [
+    { "name": "+", "label": "Positive" },
+    { "name": "-", "label": "Negative" }
+  ]
+}
