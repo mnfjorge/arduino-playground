@@ -40,3 +40,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 This project includes the [`@vercel/blob`](https://vercel.com/docs/storage/vercel-blob) SDK for file storage.
 
 To use it locally, create a Blob store from your Vercel project's Storage tab, copy the generated `BLOB_READ_WRITE_TOKEN`, and add it to a `.env.local` file (see `.env.example`). When deployed on Vercel with a Blob store linked, this variable is set automatically.
+
+### File storage abstraction
+
+`lib/file-storage.ts` exposes `uploadFile`, `downloadFile`, `deleteFile`, and `listFiles` helpers that hide whether files live in Vercel Blob or on local disk. They use Vercel Blob by default. Set `USE_LOCAL_FILE_STORAGE=true` in `.env.local` to have them read/write the `./temp` folder instead, so you can develop without a Blob store. `temp/` is gitignored (its contents aren't committed).

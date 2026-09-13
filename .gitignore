@@ -37,6 +37,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local file storage (used as a dev fallback for @vercel/blob, see lib/file-storage.ts)
+/temp/*
+!/temp/.gitkeep
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
