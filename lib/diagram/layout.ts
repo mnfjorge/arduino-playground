@@ -7,6 +7,10 @@ const NODE_PADDING = 16;
 const MIN_NODE_WIDTH = 160;
 const MIN_NODE_HEIGHT = 60;
 const CHARS_TO_PX = 7;
+// How far a pin's connecting dot sits from the component box. Ports are
+// placed out here (not on the box edge) so a wire's routing - and its first
+// bend - starts with real clearance from the component instead of hugging it.
+const PIN_STUB = 28;
 
 export type PinSide = "WEST" | "EAST";
 
@@ -77,20 +81,24 @@ export async function layoutDiagram(diagram: Diagram): Promise<DiagramLayout> {
       definition.pins.map((pin) => pin.label ?? pin.name),
     );
 
-    const ports = [...west, ...east].map((pin, index) => ({
-      id: pinId(component.id, pin.name),
-      width: 1,
-      height: 1,
-      layoutOptions: {
-        "elk.port.side": index < west.length ? "WEST" : "EAST",
-      },
-    }));
+    const sidePins = (pins: typeof west, side: PinSide) =>
+      pins.map((pin, index) => ({
+        id: pinId(component.id, pin.name),
+        width: 1,
+        height: 1,
+        // FIXED_POS below means these coordinates are taken as-is: y is spread
+        // evenly down the box's interior, x sits PIN_STUB outside the box edge.
+        x: side === "WEST" ? -PIN_STUB : width + PIN_STUB,
+        y: NODE_PADDING + ((index + 0.5) / pins.length) * (height - NODE_PADDING * 2),
+      }));
+
+    const ports = [...sidePins(west, "WEST"), ...sidePins(east, "EAST")];
 
     return {
       id: component.id,
       width,
       height,
-      layoutOptions: { "elk.portConstraints": "FIXED_SIDE" },
+      layoutOptions: { "elk.portConstraints": "FIXED_POS" },
       ports,
     };
   });
@@ -134,7 +142,7 @@ export async function layoutDiagram(diagram: Diagram): Promise<DiagramLayout> {
     const pins: LayoutPin[] = (node.ports ?? []).map((port) => {
       const pinName = port.id.slice(pinId(component.id, "").length);
       const pinDef = pinByName.get(pinName);
-      const side = (port.layoutOptions?.["elk.port.side"] as PinSide | undefined) ?? "WEST";
+      const side: PinSide = (port.x ?? 0) < 0 ? "WEST" : "EAST";
       return {
         name: pinDef?.name ?? pinName,
         label: pinDef?.label,

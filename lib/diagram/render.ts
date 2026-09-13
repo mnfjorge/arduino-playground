@@ -3,7 +3,6 @@ import { layoutDiagram, type DiagramLayout, type LayoutNode } from "./layout";
 import type { Diagram } from "./types";
 
 const MARGIN = 40;
-const PIN_STUB = 14;
 const FONT_FAMILY = "Helvetica, Arial, sans-serif";
 const INK = "#1f2933";
 const WIRE = "#2b6cb0";
@@ -21,12 +20,15 @@ function renderNode(node: LayoutNode): string {
   ];
 
   for (const pin of node.pins) {
-    const stubEndX = pin.side === "WEST" ? pin.x - PIN_STUB : pin.x + PIN_STUB;
-    const textX = pin.side === "WEST" ? stubEndX - 6 : stubEndX + 6;
+    // pin.x/y is the connecting dot, already offset away from the box by the
+    // layout (see PIN_STUB in layout.ts) - the stub just draws the box edge
+    // in between, it isn't what creates the spacing.
+    const boxEdgeX = pin.side === "WEST" ? node.x : node.x + node.width;
+    const textX = pin.side === "WEST" ? pin.x - 6 : pin.x + 6;
     const anchor = pin.side === "WEST" ? "end" : "start";
     parts.push(
-      `<line x1="${pin.x}" y1="${pin.y}" x2="${stubEndX}" y2="${pin.y}" stroke="${INK}" stroke-width="2" />`,
-      `<circle cx="${stubEndX}" cy="${pin.y}" r="3" fill="${INK}" />`,
+      `<line x1="${boxEdgeX}" y1="${pin.y}" x2="${pin.x}" y2="${pin.y}" stroke="${INK}" stroke-width="2" />`,
+      `<circle cx="${pin.x}" cy="${pin.y}" r="3" fill="${INK}" />`,
       `<text x="${textX}" y="${pin.y + 3}" text-anchor="${anchor}" font-family="${FONT_FAMILY}" font-size="10" fill="${INK}">${escapeXml(pin.name)}</text>`,
     );
   }
