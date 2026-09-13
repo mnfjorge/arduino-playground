@@ -32,3 +32,12 @@ export async function saveDiagram(diagram: Diagram): Promise<void> {
 export async function saveDiagramImage(id: string, jpeg: Buffer): Promise<StoredFile> {
   return uploadFile(diagramImagePath(id), jpeg, { contentType: "image/jpeg" });
 }
+
+/** Returns the diagram's rendered JPEG, or null if render_diagram hasn't been called for it yet. */
+export async function getDiagramImage(id: string): Promise<Buffer | null> {
+  try {
+    return await downloadFile(diagramImagePath(id));
+  } catch {
+    return null;
+  }
+}

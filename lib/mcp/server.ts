@@ -73,7 +73,6 @@ export function createDiagramMcpServer(): McpServer {
         structuredContent: {
           diagramId: result.diagramId,
           viewUrl: result.viewUrl,
-          imageUrl: result.imageUrl,
         },
       };
     },

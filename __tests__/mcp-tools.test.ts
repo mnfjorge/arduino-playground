@@ -2,6 +2,7 @@ process.env.USE_LOCAL_FILE_STORAGE = "true";
 
 import { randomUUID } from "node:crypto";
 import { deleteFile } from "../lib/file-storage";
+import { getDiagramImage } from "../lib/diagram/store";
 import { createDiagram, listComponentTypes, renderDiagram, updateDiagram, type DiagramInput } from "../lib/mcp/tools";
 
 const createdDiagramIds: string[] = [];
@@ -129,6 +130,20 @@ describe("renderDiagram", () => {
       expect(result.viewUrl).toContain(`/view/${diagramId}`);
       // JPEG magic bytes: 0xFF 0xD8 0xFF
       expect(result.jpeg.subarray(0, 3)).toEqual(Buffer.from([0xff, 0xd8, 0xff]));
+    }
+  });
+
+  test("persists the same image getDiagramImage later reads back", async () => {
+    const diagramId = trackedDiagramId();
+    await createDiagram(baseInput(diagramId));
+
+    expect(await getDiagramImage(diagramId)).toBeNull();
+
+    const result = await renderDiagram(diagramId);
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      const stored = await getDiagramImage(diagramId);
+      expect(stored).toEqual(result.jpeg);
     }
   });
 });
