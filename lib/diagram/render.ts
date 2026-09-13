@@ -1,12 +1,26 @@
+import { Resvg } from "@resvg/resvg-js";
+import path from "node:path";
 import sharp from "sharp";
 import { layoutDiagram, type DiagramLayout, type LayoutNode } from "./layout";
 import type { Diagram } from "./types";
 
 const MARGIN = 40;
-const FONT_FAMILY = "Helvetica, Arial, sans-serif";
+const FONT_FAMILY = "Geist";
 const INK = "#1f2933";
 const WIRE = "#2b6cb0";
 const MUTED = "#52606d";
+
+// Serverless runtimes (Vercel included) generally ship no system fonts, so
+// asking a raster engine to render SVG <text> via fontconfig - which is what
+// sharp/librsvg do - silently draws empty "tofu" boxes instead of glyphs
+// (this can go unnoticed locally if your machine happens to have fonts
+// installed). resvg sidesteps that: given loadSystemFonts: false and our own
+// font files, rendering is identical everywhere. It only emits PNG, so sharp
+// still does the final PNG -> JPEG conversion (pure raster, no fonts involved).
+const FONT_DIR = path.join(process.cwd(), "assets/fonts");
+const FONT_FILES = ["Geist-Regular.ttf", "Geist-SemiBold.ttf", "Geist-Bold.ttf"].map((file) =>
+  path.join(FONT_DIR, file),
+);
 
 function escapeXml(value: string): string {
   return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -70,5 +84,17 @@ export function diagramToSvg(diagram: Diagram, layout: DiagramLayout): string {
 export async function renderDiagramToJpeg(diagram: Diagram): Promise<Buffer> {
   const layout = await layoutDiagram(diagram);
   const svg = diagramToSvg(diagram, layout);
-  return sharp(Buffer.from(svg)).flatten({ background: "#ffffff" }).jpeg({ quality: 90 }).toBuffer();
+
+  const resvg = new Resvg(svg, {
+    font: {
+      loadSystemFonts: false,
+      fontFiles: FONT_FILES,
+      defaultFontFamily: FONT_FAMILY,
+      sansSerifFamily: FONT_FAMILY,
+    },
+    background: "#ffffff",
+  });
+  const png = resvg.render().asPng();
+
+  return sharp(png).jpeg({ quality: 90 }).toBuffer();
 }
