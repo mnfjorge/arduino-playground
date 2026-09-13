@@ -18,7 +18,7 @@
     },
     "category": {
       "type": "string",
-      "enum": ["microcontroller", "sensor", "actuator", "power", "display", "3d-printer"],
+      "enum": ["microcontroller", "sensor", "actuator", "power", "display", "3d-printer", "expansion"],
       "description": "Broad grouping, mainly for organizing list_component_types output."
     },
     "description": {

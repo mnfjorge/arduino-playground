@@ -1,0 +1,32 @@
+{
+  "type": "cd74hc4067",
+  "label": "CD74HC4067 16-Channel Analog/Digital Mux",
+  "category": "expansion",
+  "description": "16-channel analog/digital multiplexer breakout board. S0-S3 select which of the 16 channels (C0-C15) is connected to the shared SIG pin, letting one microcontroller pin read/drive 16 signals.",
+  "pins": [
+    { "name": "VCC", "label": "Power (3.3V-5V)" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "EN", "label": "Enable (active low)" },
+    { "name": "SIG", "label": "Common input/output (to microcontroller)" },
+    { "name": "S0", "label": "Channel select bit 0", "group": "select" },
+    { "name": "S1", "label": "Channel select bit 1", "group": "select" },
+    { "name": "S2", "label": "Channel select bit 2", "group": "select" },
+    { "name": "S3", "label": "Channel select bit 3", "group": "select" },
+    { "name": "C0", "label": "Channel 0", "group": "channels" },
+    { "name": "C1", "label": "Channel 1", "group": "channels" },
+    { "name": "C2", "label": "Channel 2", "group": "channels" },
+    { "name": "C3", "label": "Channel 3", "group": "channels" },
+    { "name": "C4", "label": "Channel 4", "group": "channels" },
+    { "name": "C5", "label": "Channel 5", "group": "channels" },
+    { "name": "C6", "label": "Channel 6", "group": "channels" },
+    { "name": "C7", "label": "Channel 7", "group": "channels" },
+    { "name": "C8", "label": "Channel 8", "group": "channels" },
+    { "name": "C9", "label": "Channel 9", "group": "channels" },
+    { "name": "C10", "label": "Channel 10", "group": "channels" },
+    { "name": "C11", "label": "Channel 11", "group": "channels" },
+    { "name": "C12", "label": "Channel 12", "group": "channels" },
+    { "name": "C13", "label": "Channel 13", "group": "channels" },
+    { "name": "C14", "label": "Channel 14", "group": "channels" },
+    { "name": "C15", "label": "Channel 15", "group": "channels" }
+  ]
+}
