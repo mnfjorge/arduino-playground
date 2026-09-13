@@ -15,13 +15,14 @@ export interface ComponentNodeData extends Record<string, unknown> {
 export type ComponentNodeType = Node<ComponentNodeData, "component">;
 
 const PIN_SIZE = 10;
+const PIN_LABEL_GAP = 6;
 
 export function ComponentNode({ data }: NodeProps<ComponentNodeType>) {
   const { layoutNode, definition, onHoverComponent, onHoverPin, onLeave } = data;
 
   return (
     <div
-      className="relative rounded-lg border-2 border-zinc-800 bg-white shadow-sm dark:border-zinc-200 dark:bg-zinc-900"
+      className="relative overflow-visible rounded-lg border-2 border-zinc-800 bg-white shadow-sm dark:border-zinc-200 dark:bg-zinc-900"
       style={{ width: layoutNode.width, height: layoutNode.height }}
       onMouseEnter={() => onHoverComponent(layoutNode, definition)}
       onMouseLeave={onLeave}
@@ -34,28 +35,54 @@ export function ComponentNode({ data }: NodeProps<ComponentNodeType>) {
       </div>
 
       {layoutNode.pins.map((pin) => {
-        const left = pin.x - layoutNode.x;
-        const top = pin.y - layoutNode.y;
+        const pinX = pin.x - layoutNode.x;
+        const pinY = pin.y - layoutNode.y;
+        const boxEdgeX = pin.side === "WEST" ? 0 : layoutNode.width;
+        const stubLeft = Math.min(boxEdgeX, pinX);
+        const stubWidth = Math.abs(pinX - boxEdgeX);
+        const labelOnWest = pin.side === "WEST";
         return (
-          <div
-            key={pin.name}
-            className="absolute rounded-full border border-zinc-900 bg-zinc-900 transition-transform hover:scale-150 dark:border-zinc-100 dark:bg-zinc-100"
-            style={{
-              width: PIN_SIZE,
-              height: PIN_SIZE,
-              left: left - PIN_SIZE / 2,
-              top: top - PIN_SIZE / 2,
-              cursor: "pointer",
-            }}
-            onMouseEnter={(event) => {
-              event.stopPropagation();
-              onHoverPin(layoutNode, pin, definition);
-            }}
-            onMouseLeave={(event) => {
-              event.stopPropagation();
-              onHoverComponent(layoutNode, definition);
-            }}
-          />
+          <div key={pin.name} className="absolute inset-0 overflow-visible" style={{ pointerEvents: "none" }}>
+            <div
+              className="absolute bg-zinc-900 dark:bg-zinc-100"
+              style={{
+                left: stubLeft,
+                top: pinY - 1,
+                width: stubWidth,
+                height: 2,
+              }}
+            />
+            <span
+              className={`absolute font-mono text-[10px] leading-none text-zinc-900 dark:text-zinc-100 ${
+                labelOnWest ? "-translate-x-full text-right" : "text-left"
+              }`}
+              style={{
+                top: pinY - 5,
+                left: labelOnWest ? pinX - PIN_LABEL_GAP : pinX + PIN_LABEL_GAP,
+              }}
+            >
+              {pin.name}
+            </span>
+            <div
+              className="absolute rounded-full border border-zinc-900 bg-zinc-900 transition-transform hover:scale-150 dark:border-zinc-100 dark:bg-zinc-100"
+              style={{
+                width: PIN_SIZE,
+                height: PIN_SIZE,
+                left: pinX - PIN_SIZE / 2,
+                top: pinY - PIN_SIZE / 2,
+                cursor: "pointer",
+                pointerEvents: "auto",
+              }}
+              onMouseEnter={(event) => {
+                event.stopPropagation();
+                onHoverPin(layoutNode, pin, definition);
+              }}
+              onMouseLeave={(event) => {
+                event.stopPropagation();
+                onHoverComponent(layoutNode, definition);
+              }}
+            />
+          </div>
         );
       })}
     </div>
