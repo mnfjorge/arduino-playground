@@ -1,4 +1,4 @@
-import { del, get, list as listBlobs, put } from "@vercel/blob";
+import { del, get, list as listBlobs, put, type BlobAccessType } from "@vercel/blob";
 import { promises as fs, type Dirent } from "node:fs";
 import path from "node:path";
 
@@ -17,6 +17,15 @@ const LOCAL_STORAGE_ROOT = path.join(process.cwd(), "temp");
 
 function isLocalFileStorageEnabled(): boolean {
   return process.env.USE_LOCAL_FILE_STORAGE === "true";
+}
+
+// A Blob store is provisioned as either public or private, and every read/write
+// must declare the matching access level or the SDK rejects it outright ("Cannot
+// use public access on a private store"). We can't detect this at runtime, so it's
+// configurable; default to "private" since that's Vercel's current default for new
+// stores. Set BLOB_ACCESS=public if the store was created with public access.
+function getBlobAccess(): BlobAccessType {
+  return process.env.BLOB_ACCESS === "public" ? "public" : "private";
 }
 
 async function toBuffer(data: FileData): Promise<Buffer> {
@@ -79,8 +88,7 @@ async function listLocal(prefix = ""): Promise<StoredFile[]> {
 
 async function uploadBlob(pathname: string, data: Buffer, options?: UploadOptions): Promise<StoredFile> {
   const blob = await put(pathname, data, {
-    // Kept simple for now; switch to 'private' if the app needs to gate access to files.
-    access: "public",
+    access: getBlobAccess(),
     addRandomSuffix: false,
     allowOverwrite: true,
     contentType: options?.contentType,
@@ -89,7 +97,7 @@ async function uploadBlob(pathname: string, data: Buffer, options?: UploadOption
 }
 
 async function downloadBlob(pathname: string): Promise<Buffer> {
-  const result = await get(pathname, { access: "public" });
+  const result = await get(pathname, { access: getBlobAccess() });
   if (!result || result.statusCode !== 200) {
     throw new Error(`File not found: ${pathname}`);
   }

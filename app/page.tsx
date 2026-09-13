@@ -1,68 +1,77 @@
-import Image from "next/image";
+import { z } from "zod";
+import { toolDefinitions } from "@/lib/mcp/tool-definitions";
+import { getBaseUrl } from "@/lib/site-url";
+
+function CodeBlock({ children }: { children: string }) {
+  return (
+    <pre className="mt-3 overflow-x-auto rounded-lg border border-zinc-200 bg-zinc-50 p-4 text-sm dark:border-zinc-800 dark:bg-zinc-900">
+      <code className="font-mono">{children}</code>
+    </pre>
+  );
+}
+
+function formatParamsSchema(shape: Record<string, z.ZodType>): string {
+  // Every tool's schema repeats the same $schema line; it's identical noise here, not information.
+  const schema = z.toJSONSchema(z.object(shape)) as Record<string, unknown>;
+  delete schema.$schema;
+  return JSON.stringify(schema, null, 2);
+}
 
 export default function Home() {
+  const endpoint = `${getBaseUrl()}/api/mcp`;
+
+  const clientConfig = JSON.stringify(
+    { mcpServers: { "electronics-diagrams": { url: endpoint } } },
+    null,
+    2,
+  );
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="min-h-full bg-background text-foreground">
+      <main className="mx-auto flex max-w-3xl flex-col gap-12 px-6 py-16">
+        <header>
+          <h1 className="text-3xl font-semibold tracking-tight">Electronics Diagram MCP Server</h1>
+          <p className="mt-3 text-lg text-zinc-600 dark:text-zinc-400">
+            Lets an LLM design electronics wiring diagrams from JSON over MCP, and render them to an image.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+        </header>
+
+        <section>
+          <h2 className="text-xl font-semibold">Connect</h2>
+          <p className="mt-2 text-zinc-600 dark:text-zinc-400">
+            Streamable HTTP, no authentication or sessions. Point an MCP client at:
+          </p>
+          <CodeBlock>{`POST ${endpoint}`}</CodeBlock>
+          <p className="mt-4 text-zinc-600 dark:text-zinc-400">Example client configuration:</p>
+          <CodeBlock>{clientConfig}</CodeBlock>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-semibold">Tools</h2>
+          <div className="mt-4 flex flex-col gap-6">
+            {toolDefinitions.map((tool) => (
+              <div key={tool.name} className="rounded-lg border border-zinc-200 p-5 dark:border-zinc-800">
+                <h3 className="font-mono text-base font-semibold">{tool.name}</h3>
+                <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{tool.description}</p>
+                <p className="mt-4 text-xs font-medium tracking-wide text-zinc-500 uppercase">Parameters</p>
+                <CodeBlock>
+                  {tool.inputShape ? formatParamsSchema(tool.inputShape) : "None"}
+                </CodeBlock>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-semibold">Diagram format</h2>
+          <p className="mt-2 text-zinc-600 dark:text-zinc-400">
+            Diagrams are JSON (see <code className="font-mono text-sm">schema/diagram.schema.json</code>): a list of
+            component instances and pin-to-pin connections. Component placement and wire routing are computed
+            automatically — there&apos;s no canvas or position to configure. Call{" "}
+            <code className="font-mono text-sm">list_component_types</code> first to see every available component
+            type and its pins.
+          </p>
+        </section>
       </main>
     </div>
   );

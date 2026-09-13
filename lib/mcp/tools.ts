@@ -66,7 +66,7 @@ export async function updateDiagram(input: DiagramInput): Promise<ToolResult> {
 }
 
 export type RenderResult =
-  | { ok: true; diagramId: string; title?: string; imageUrl: string; viewUrl: string; jpeg: Buffer }
+  | { ok: true; diagramId: string; title?: string; viewUrl: string; jpeg: Buffer }
   | { ok: false; errors: string[] };
 
 /** Renders a diagram to JPEG and stores it, returning the public view URL. */
@@ -77,13 +77,12 @@ export async function renderDiagram(diagramId: string): Promise<RenderResult> {
   }
 
   const jpeg = await renderDiagramToJpeg(diagram);
-  const stored = await saveDiagramImage(diagramId, jpeg);
+  await saveDiagramImage(diagramId, jpeg);
 
   return {
     ok: true,
     diagramId,
     title: diagram.title,
-    imageUrl: stored.url,
     viewUrl: `${getBaseUrl()}/view/${diagramId}`,
     jpeg,
   };
