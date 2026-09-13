@@ -1,5 +1,16 @@
 import { notFound } from "next/navigation";
+import { getComponentDefinition } from "@/lib/components/registry";
 import { getDiagram } from "@/lib/diagram/store";
+import type { DiagramComponent } from "@/lib/diagram/types";
+
+function componentLabel(component: DiagramComponent | undefined, fallbackId: string): string {
+  return component?.label || component?.type || fallbackId;
+}
+
+function pinLabel(component: DiagramComponent | undefined, pin: string): string {
+  const definition = component && getComponentDefinition(component.type);
+  return definition?.pins.find((p) => p.name === pin)?.label ?? pin;
+}
 
 export default async function ViewDiagramPage({ params }: PageProps<"/view/[id]">) {
   const { id } = await params;
@@ -10,6 +21,29 @@ export default async function ViewDiagramPage({ params }: PageProps<"/view/[id]"
   }
 
   const json = JSON.stringify(diagram, null, 2);
+
+  const componentById = new Map(diagram.components.map((component) => [component.id, component]));
+
+  const connectionRows = diagram.connections
+    .flatMap((connection) => {
+      const from = componentById.get(connection.from.component);
+      const to = componentById.get(connection.to.component);
+      return [
+        {
+          component: componentLabel(from, connection.from.component),
+          pin: pinLabel(from, connection.from.pin),
+          otherComponent: componentLabel(to, connection.to.component),
+          otherPin: pinLabel(to, connection.to.pin),
+        },
+        {
+          component: componentLabel(to, connection.to.component),
+          pin: pinLabel(to, connection.to.pin),
+          otherComponent: componentLabel(from, connection.from.component),
+          otherPin: pinLabel(from, connection.from.pin),
+        },
+      ];
+    })
+    .sort((a, b) => a.component.localeCompare(b.component) || a.pin.localeCompare(b.pin));
 
   return (
     <div className="min-h-full bg-background text-foreground">
@@ -29,6 +63,43 @@ export default async function ViewDiagramPage({ params }: PageProps<"/view/[id]"
             alt={diagram.title ?? `Diagram ${id}`}
             className="w-full rounded-lg border border-zinc-200 dark:border-zinc-800"
           />
+        </section>
+
+        <section>
+          <h2 className="text-lg font-semibold">Connections</h2>
+          <div className="mt-3 overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
+            <table className="w-full text-left text-sm">
+              <thead className="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900">
+                <tr>
+                  <th className="px-4 py-2 font-medium">Component</th>
+                  <th className="px-4 py-2 font-medium">Pin</th>
+                  <th className="px-4 py-2 font-medium">Connected to</th>
+                  <th className="px-4 py-2 font-medium">Pin</th>
+                </tr>
+              </thead>
+              <tbody>
+                {connectionRows.length === 0 ? (
+                  <tr>
+                    <td className="px-4 py-2 text-zinc-500" colSpan={4}>
+                      No connections.
+                    </td>
+                  </tr>
+                ) : (
+                  connectionRows.map((row, index) => (
+                    <tr
+                      key={`${row.component}-${row.pin}-${row.otherComponent}-${row.otherPin}-${index}`}
+                      className="border-b border-zinc-200 last:border-0 dark:border-zinc-800"
+                    >
+                      <td className="px-4 py-2">{row.component}</td>
+                      <td className="px-4 py-2 font-mono">{row.pin}</td>
+                      <td className="px-4 py-2">{row.otherComponent}</td>
+                      <td className="px-4 py-2 font-mono">{row.otherPin}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </section>
 
         <section>
