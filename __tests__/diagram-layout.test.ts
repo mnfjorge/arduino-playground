@@ -68,6 +68,25 @@ describe("layoutDiagram", () => {
     }
   });
 
+  test("assigns each pin's side based on where its connection actually goes", async () => {
+    // sensor-1 and psu-1 both connect only to mcu-1, so relative to mcu-1
+    // they sit to the west: mcu-1's connected pins should face west (toward
+    // them), and sensor-1/psu-1's connected pins should face east (toward
+    // mcu-1) - not an arbitrary index-based split.
+    const layout = await layoutDiagram(diagram);
+    const sideOf = (componentId: string, pin: string) => {
+      const node = layout.nodes.find((n) => n.componentId === componentId)!;
+      return node.pins.find((p) => p.name === pin)!.side;
+    };
+
+    expect(sideOf("mcu-1", "D4")).toBe("WEST");
+    expect(sideOf("mcu-1", "3V3")).toBe("WEST");
+    expect(sideOf("mcu-1", "VIN")).toBe("WEST");
+    expect(sideOf("sensor-1", "OUT")).toBe("EAST");
+    expect(sideOf("sensor-1", "VCC")).toBe("EAST");
+    expect(sideOf("psu-1", "DC+")).toBe("EAST");
+  });
+
   test("throws a clear error for an unknown component type", async () => {
     const bad: Diagram = {
       id: diagram.id,

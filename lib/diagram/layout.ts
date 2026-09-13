@@ -1,5 +1,5 @@
 import ELK, { type ElkExtendedEdge, type ElkNode } from "elkjs/lib/elk.bundled.js";
-import { getComponentDefinition } from "../components/registry";
+import { getComponentDefinition, type ComponentPin } from "../components/registry";
 import type { Diagram } from "./types";
 
 const PIN_SPACING = 24;
@@ -56,13 +56,104 @@ function estimateNodeWidth(label: string, pinLabels: string[]): number {
   return Math.max(MIN_NODE_WIDTH, contentWidth);
 }
 
+function nodeHeight(westCount: number, eastCount: number): number {
+  return Math.max(MIN_NODE_HEIGHT, Math.max(westCount, eastCount) * PIN_SPACING + NODE_PADDING * 2);
+}
+
+/**
+ * Cheap first pass with no ports: edges connect node-to-node directly, so
+ * elk only needs to decide each component's column, not route anything. We
+ * use the resulting x-centers to decide, per pin, whether the component it
+ * connects to sits to the left or right - that's what determines which side
+ * of the box the pin (and its wire) should exit from.
+ */
+async function estimateComponentCenters(diagram: Diagram): Promise<Map<string, number>> {
+  const elk = new ELK();
+
+  const nodes: ElkNode[] = diagram.components.map((component) => {
+    const definition = getComponentDefinition(component.type);
+    if (!definition) {
+      throw new Error(`Unknown component type "${component.type}" for component "${component.id}"`);
+    }
+    const half = Math.ceil(definition.pins.length / 2);
+    return {
+      id: component.id,
+      width: estimateNodeWidth(
+        component.label ?? definition.label,
+        definition.pins.map((pin) => pin.label ?? pin.name),
+      ),
+      height: nodeHeight(half, definition.pins.length - half),
+    };
+  });
+
+  const edges: ElkExtendedEdge[] = diagram.connections.map((connection, index) => ({
+    id: connection.id ?? `edge-${index}`,
+    sources: [connection.from.component],
+    targets: [connection.to.component],
+  }));
+
+  const graph: ElkNode = {
+    id: "root",
+    layoutOptions: { "elk.algorithm": "layered", "elk.direction": "RIGHT" },
+    children: nodes,
+    edges,
+  };
+
+  const result = await elk.layout(graph);
+  const centers = new Map<string, number>();
+  for (const node of result.children ?? []) {
+    centers.set(node.id, (node.x ?? 0) + (node.width ?? 0) / 2);
+  }
+  return centers;
+}
+
+/**
+ * Decides which side of the box a pin's connecting dot belongs on, based on
+ * whether the component(s) it's wired to sit to the left or right of this
+ * one (per the preliminary layout). A pin with connections on both sides, or
+ * none at all, falls back to alternating so pins still spread across both
+ * sides for box sizing/legibility.
+ */
+function choosePinSide(
+  componentId: string,
+  pinName: string,
+  diagram: Diagram,
+  centers: Map<string, number>,
+  fallbackIndex: number,
+): PinSide {
+  const ownCenter = centers.get(componentId) ?? 0;
+  let westVotes = 0;
+  let eastVotes = 0;
+
+  for (const connection of diagram.connections) {
+    let otherComponent: string | undefined;
+    if (connection.from.component === componentId && connection.from.pin === pinName) {
+      otherComponent = connection.to.component;
+    } else if (connection.to.component === componentId && connection.to.pin === pinName) {
+      otherComponent = connection.from.component;
+    }
+    if (!otherComponent || otherComponent === componentId) continue;
+
+    const otherCenter = centers.get(otherComponent);
+    if (otherCenter === undefined) continue;
+    if (otherCenter < ownCenter) westVotes++;
+    else if (otherCenter > ownCenter) eastVotes++;
+  }
+
+  if (westVotes > eastVotes) return "WEST";
+  if (eastVotes > westVotes) return "EAST";
+  return fallbackIndex % 2 === 0 ? "WEST" : "EAST";
+}
+
 /**
  * Computes node placement and orthogonal wire routing for a diagram using elkjs.
- * Pins are split evenly across the west/east sides of each component's box
- * (like a simple IC symbol) so every pin label renders as plain horizontal
- * text instead of needing rotation for top/bottom placement.
+ * Each pin is assigned to the west or east side of its component's box (like
+ * a simple IC symbol) based on which side its connected component(s) land
+ * on, so wires exit toward where they're actually headed instead of
+ * potentially looping around the box.
  */
 export async function layoutDiagram(diagram: Diagram): Promise<DiagramLayout> {
+  const centers = await estimateComponentCenters(diagram);
   const elk = new ELK();
 
   const elkNodes: ElkNode[] = diagram.components.map((component) => {
@@ -71,17 +162,22 @@ export async function layoutDiagram(diagram: Diagram): Promise<DiagramLayout> {
       throw new Error(`Unknown component type "${component.type}" for component "${component.id}"`);
     }
 
-    const west = definition.pins.filter((_, index) => index % 2 === 0);
-    const east = definition.pins.filter((_, index) => index % 2 === 1);
+    const sides = new Map<string, PinSide>();
+    definition.pins.forEach((pin, index) => {
+      sides.set(pin.name, choosePinSide(component.id, pin.name, diagram, centers, index));
+    });
+
+    const west = definition.pins.filter((pin) => sides.get(pin.name) === "WEST");
+    const east = definition.pins.filter((pin) => sides.get(pin.name) === "EAST");
     const label = component.label ?? definition.label;
 
-    const height = Math.max(MIN_NODE_HEIGHT, Math.max(west.length, east.length) * PIN_SPACING + NODE_PADDING * 2);
+    const height = nodeHeight(west.length, east.length);
     const width = estimateNodeWidth(
       label,
       definition.pins.map((pin) => pin.label ?? pin.name),
     );
 
-    const sidePins = (pins: typeof west, side: PinSide) =>
+    const sidePins = (pins: ComponentPin[], side: PinSide) =>
       pins.map((pin, index) => ({
         id: pinId(component.id, pin.name),
         width: 1,
