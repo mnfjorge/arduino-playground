@@ -1,4 +1,6 @@
+import { cache } from "react";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { getComponentDefinition } from "@/lib/components/registry";
 import { getDiagram } from "@/lib/diagram/store";
 import type { DiagramComponent } from "@/lib/diagram/types";
@@ -12,9 +14,18 @@ function pinLabel(component: DiagramComponent | undefined, pin: string): string 
   return definition?.pins.find((p) => p.name === pin)?.label ?? pin;
 }
 
+// Shared by generateMetadata and the page body so the diagram is only fetched once per request.
+const getCachedDiagram = cache(getDiagram);
+
+export async function generateMetadata({ params }: PageProps<"/view/[id]">): Promise<Metadata> {
+  const { id } = await params;
+  const diagram = await getCachedDiagram(id);
+  return { title: diagram?.title || "Untitled diagram" };
+}
+
 export default async function ViewDiagramPage({ params }: PageProps<"/view/[id]">) {
   const { id } = await params;
-  const diagram = await getDiagram(id);
+  const diagram = await getCachedDiagram(id);
 
   if (!diagram) {
     notFound();
