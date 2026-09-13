@@ -1,6 +1,6 @@
 import ELK, { type ElkExtendedEdge, type ElkNode } from "elkjs/lib/elk.bundled.js";
 import { getComponentDefinition, type ComponentPin } from "../components/registry";
-import type { Diagram } from "./types";
+import type { Diagram, DiagramConnection, PinRef } from "./types";
 
 const PIN_SPACING = 24;
 const NODE_PADDING = 16;
@@ -36,6 +36,8 @@ export interface LayoutNode {
 export interface LayoutEdge {
   id: string;
   points: { x: number; y: number }[];
+  from: PinRef;
+  to: PinRef;
 }
 
 export interface DiagramLayout {
@@ -47,6 +49,10 @@ export interface DiagramLayout {
 
 function pinId(componentId: string, pinName: string): string {
   return `${componentId}::${pinName}`;
+}
+
+function connectionId(connection: DiagramConnection, index: number): string {
+  return connection.id ?? `edge-${index}`;
 }
 
 function estimateNodeWidth(label: string, pinLabels: string[]): number {
@@ -87,7 +93,7 @@ async function estimateComponentCenters(diagram: Diagram): Promise<Map<string, n
   });
 
   const edges: ElkExtendedEdge[] = diagram.connections.map((connection, index) => ({
-    id: connection.id ?? `edge-${index}`,
+    id: connectionId(connection, index),
     sources: [connection.from.component],
     targets: [connection.to.component],
   }));
@@ -199,8 +205,10 @@ export async function layoutDiagram(diagram: Diagram): Promise<DiagramLayout> {
     };
   });
 
+  const connectionById = new Map(diagram.connections.map((connection, index) => [connectionId(connection, index), connection]));
+
   const elkEdges: ElkExtendedEdge[] = diagram.connections.map((connection, index) => ({
-    id: connection.id ?? `edge-${index}`,
+    id: connectionId(connection, index),
     sources: [pinId(connection.from.component, connection.from.pin)],
     targets: [pinId(connection.to.component, connection.to.pin)],
   }));
@@ -265,7 +273,12 @@ export async function layoutDiagram(diagram: Diagram): Promise<DiagramLayout> {
     for (const section of edge.sections ?? []) {
       points.push(section.startPoint, ...(section.bendPoints ?? []), section.endPoint);
     }
-    return { id: edge.id ?? "edge", points };
+    const id = edge.id ?? "edge";
+    const connection = connectionById.get(id);
+    if (!connection) {
+      throw new Error(`Layout produced an unexpected edge id "${id}"`);
+    }
+    return { id, points, from: connection.from, to: connection.to };
   });
 
   return {
