@@ -6,6 +6,7 @@ import { InteractiveDiagram } from "@/components/diagram/interactive-diagram";
 import { getComponentDefinition, type ComponentDefinition } from "@/lib/components/registry";
 import { layoutDiagram } from "@/lib/diagram/layout";
 import { getDiagram } from "@/lib/diagram/store";
+import { getConnectionStableId } from "@/lib/diagram/connection-id";
 import type { DiagramComponent } from "@/lib/diagram/types";
 
 function componentLabel(component: DiagramComponent | undefined, fallbackId: string): string {
@@ -50,14 +51,17 @@ export default async function ViewDiagramPage({ params }: PageProps<"/view/[id]"
     .flatMap((connection) => {
       const from = componentById.get(connection.from.component);
       const to = componentById.get(connection.to.component);
+      const connectionId = getConnectionStableId(connection);
       return [
         {
+          connectionId,
           component: componentLabel(from, connection.from.component),
           pin: pinLabel(from, connection.from.pin),
           otherComponent: componentLabel(to, connection.to.component),
           otherPin: pinLabel(to, connection.to.pin),
         },
         {
+          connectionId,
           component: componentLabel(to, connection.to.component),
           pin: pinLabel(to, connection.to.pin),
           otherComponent: componentLabel(from, connection.from.component),
@@ -66,7 +70,10 @@ export default async function ViewDiagramPage({ params }: PageProps<"/view/[id]"
       ];
     })
     .sort((a, b) => a.component.localeCompare(b.component) || a.pin.localeCompare(b.pin))
-    .map((row, index) => ({ ...row, key: `${row.component}-${row.pin}-${row.otherComponent}-${row.otherPin}-${index}` }));
+    .map((row) => ({
+      ...row,
+      key: `${row.connectionId}:${row.component}:${row.pin}:${row.otherComponent}:${row.otherPin}`,
+    }));
 
   return (
     <div className="min-h-full bg-background text-foreground">
