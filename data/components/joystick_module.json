@@ -1,0 +1,13 @@
+{
+  "type": "joystick_module",
+  "label": "Analog Joystick Module",
+  "category": "sensor",
+  "description": "2-axis analog joystick with a momentary push-button switch (e.g. KY-023), used for menu navigation or manual jogging.",
+  "pins": [
+    { "name": "VCC", "label": "Power" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "VRX", "label": "X-axis analog output" },
+    { "name": "VRY", "label": "Y-axis analog output" },
+    { "name": "SW", "label": "Push-button switch" }
+  ]
+}

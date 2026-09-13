@@ -1,0 +1,14 @@
+{
+  "type": "relay_module",
+  "label": "Relay Module",
+  "category": "actuator",
+  "description": "Single-channel electromechanical relay breakout with opto-isolated logic input, used to switch mains or high-current loads from a microcontroller.",
+  "pins": [
+    { "name": "VCC", "label": "Logic side power", "group": "control" },
+    { "name": "GND", "label": "Logic side ground", "group": "control" },
+    { "name": "IN", "label": "Control signal (active low)", "group": "control" },
+    { "name": "COM", "label": "Switched common", "group": "load" },
+    { "name": "NO", "label": "Normally open contact", "group": "load" },
+    { "name": "NC", "label": "Normally closed contact", "group": "load" }
+  ]
+}

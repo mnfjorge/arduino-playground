@@ -1,0 +1,12 @@
+{
+  "type": "bme280",
+  "label": "BME280 Environmental Sensor (Temp/Humidity/Pressure)",
+  "category": "sensor",
+  "description": "I2C environmental sensor combining temperature, humidity, and barometric pressure in one breakout (the BMP280 variant omits humidity but shares this pinout).",
+  "pins": [
+    { "name": "VCC", "label": "Power (3.3V-5V)" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "SCL", "label": "I2C clock" },
+    { "name": "SDA", "label": "I2C data" }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "type": "buzzer",
+  "label": "Piezo Buzzer",
+  "category": "actuator",
+  "description": "Generic 2-pin piezo buzzer for audible alerts (e.g. print-complete or error tones).",
+  "pins": [
+    { "name": "VCC", "label": "Power/signal +" },
+    { "name": "GND", "label": "Ground" }
+  ]
+}

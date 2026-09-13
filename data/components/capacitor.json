@@ -1,0 +1,10 @@
+{
+  "type": "capacitor",
+  "label": "Capacitor (Non-Polarized)",
+  "category": "passive",
+  "description": "Generic non-polarized capacitor (ceramic/film), e.g. a decoupling or debounce capacitor.",
+  "pins": [
+    { "name": "T1", "label": "Terminal 1" },
+    { "name": "T2", "label": "Terminal 2" }
+  ]
+}

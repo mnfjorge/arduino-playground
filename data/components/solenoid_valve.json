@@ -1,0 +1,10 @@
+{
+  "type": "solenoid_valve",
+  "label": "Solenoid Valve",
+  "category": "actuator",
+  "description": "Generic 2-wire DC solenoid valve, typically switched through a relay or MOSFET module rather than directly from a microcontroller pin.",
+  "pins": [
+    { "name": "T1", "label": "Coil terminal 1" },
+    { "name": "T2", "label": "Coil terminal 2" }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "type": "nrf24l01",
+  "label": "nRF24L01 2.4GHz Transceiver",
+  "category": "expansion",
+  "description": "Low-power 2.4GHz wireless transceiver module, SPI interface, commonly used for wireless sensor links.",
+  "pins": [
+    { "name": "VCC", "label": "Power (3.3V)" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "CE", "label": "Chip enable" },
+    { "name": "CSN", "label": "SPI chip select" },
+    { "name": "SCK", "label": "SPI clock" },
+    { "name": "MOSI", "label": "SPI master out / slave in" },
+    { "name": "MISO", "label": "SPI master in / slave out" },
+    { "name": "IRQ", "label": "Interrupt output" }
+  ]
+}

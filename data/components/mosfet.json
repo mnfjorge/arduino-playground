@@ -1,0 +1,11 @@
+{
+  "type": "mosfet",
+  "label": "MOSFET (discrete)",
+  "category": "passive",
+  "description": "Bare discrete power MOSFET (e.g. IRLB8721), as opposed to mosfet_module which is a full switching breakout board built around one.",
+  "pins": [
+    { "name": "GATE", "label": "Gate" },
+    { "name": "DRAIN", "label": "Drain" },
+    { "name": "SOURCE", "label": "Source" }
+  ]
+}

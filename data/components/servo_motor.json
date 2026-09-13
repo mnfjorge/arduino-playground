@@ -1,0 +1,11 @@
+{
+  "type": "servo_motor",
+  "label": "Servo Motor",
+  "category": "actuator",
+  "description": "Generic 3-wire hobby servo (e.g. SG90/MG996R).",
+  "pins": [
+    { "name": "VCC", "label": "Power" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "SIG", "label": "PWM control signal" }
+  ]
+}

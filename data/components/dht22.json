@@ -1,0 +1,11 @@
+{
+  "type": "dht22",
+  "label": "DHT22 Temperature/Humidity Sensor",
+  "category": "sensor",
+  "description": "Digital temperature and humidity sensor module (also covers the DHT11 variant, same 3-pin wiring).",
+  "pins": [
+    { "name": "VCC", "label": "Power (3.3V-5V)" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "DATA", "label": "Digital data (single-wire)" }
+  ]
+}

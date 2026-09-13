@@ -1,0 +1,16 @@
+{
+  "type": "load_cell_hx711",
+  "label": "Load Cell + HX711 Amplifier",
+  "category": "sensor",
+  "description": "Strain-gauge load cell paired with its HX711 24-bit ADC amplifier breakout, modeled as one assembly since they're always wired together.",
+  "pins": [
+    { "name": "E+", "label": "Load cell excitation +", "group": "load cell" },
+    { "name": "E-", "label": "Load cell excitation -", "group": "load cell" },
+    { "name": "A+", "label": "Load cell signal +", "group": "load cell" },
+    { "name": "A-", "label": "Load cell signal -", "group": "load cell" },
+    { "name": "VCC", "label": "Amplifier power", "group": "amplifier" },
+    { "name": "GND", "label": "Amplifier ground", "group": "amplifier" },
+    { "name": "DT", "label": "Serial data output", "group": "amplifier" },
+    { "name": "SCK", "label": "Serial clock input", "group": "amplifier" }
+  ]
+}

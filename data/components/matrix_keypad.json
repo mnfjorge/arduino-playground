@@ -1,0 +1,16 @@
+{
+  "type": "matrix_keypad",
+  "label": "4x4 Matrix Keypad",
+  "category": "sensor",
+  "description": "Membrane matrix keypad wired as 4 rows x 4 columns; each button connects one row to one column when pressed.",
+  "pins": [
+    { "name": "R1", "label": "Row 1", "group": "rows" },
+    { "name": "R2", "label": "Row 2", "group": "rows" },
+    { "name": "R3", "label": "Row 3", "group": "rows" },
+    { "name": "R4", "label": "Row 4", "group": "rows" },
+    { "name": "C1", "label": "Column 1", "group": "columns" },
+    { "name": "C2", "label": "Column 2", "group": "columns" },
+    { "name": "C3", "label": "Column 3", "group": "columns" },
+    { "name": "C4", "label": "Column 4", "group": "columns" }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "type": "max7219_led_matrix",
+  "label": "MAX7219 LED Matrix/7-Segment Driver",
+  "category": "display",
+  "description": "SPI-driven display driver module for an 8x8 LED dot matrix or chained 7-segment digits.",
+  "pins": [
+    { "name": "VCC", "label": "Power (5V)" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "DIN", "label": "SPI data in" },
+    { "name": "CS", "label": "Chip select / load" },
+    { "name": "CLK", "label": "SPI clock" },
+    { "name": "DOUT", "label": "Data out (for chaining additional modules)" }
+  ]
+}

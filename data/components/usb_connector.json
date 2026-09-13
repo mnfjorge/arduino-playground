@@ -1,0 +1,12 @@
+{
+  "type": "usb_connector",
+  "label": "USB Connector (power + data)",
+  "category": "connector",
+  "description": "Generic USB connector (Type-A/Micro-B/Type-C) exposing power and data lines, e.g. for USB power input or serial communication.",
+  "pins": [
+    { "name": "VBUS", "label": "5V power" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "D+", "label": "Data +" },
+    { "name": "D-", "label": "Data -" }
+  ]
+}

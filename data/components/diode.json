@@ -1,0 +1,10 @@
+{
+  "type": "diode",
+  "label": "Diode",
+  "category": "passive",
+  "description": "Generic rectifier/signal diode, e.g. a flyback protection diode across a relay or motor coil.",
+  "pins": [
+    { "name": "ANODE", "label": "Anode (+)" },
+    { "name": "CATHODE", "label": "Cathode (-)" }
+  ]
+}

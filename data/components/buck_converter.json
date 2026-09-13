@@ -1,0 +1,12 @@
+{
+  "type": "buck_converter",
+  "label": "DC-DC Buck Converter",
+  "category": "power",
+  "description": "Adjustable step-down voltage regulator module (e.g. LM2596-based), used to derive logic-level voltage from a higher DC rail.",
+  "pins": [
+    { "name": "VIN+", "label": "Input +", "group": "input" },
+    { "name": "VIN-", "label": "Input -", "group": "input" },
+    { "name": "VOUT+", "label": "Output +", "group": "output" },
+    { "name": "VOUT-", "label": "Output -", "group": "output" }
+  ]
+}

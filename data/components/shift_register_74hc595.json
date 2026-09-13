@@ -1,0 +1,24 @@
+{
+  "type": "shift_register_74hc595",
+  "label": "74HC595 Shift Register",
+  "category": "expansion",
+  "description": "8-bit serial-in/parallel-out shift register, used to drive multiple outputs (e.g. LEDs) from few microcontroller pins.",
+  "pins": [
+    { "name": "VCC", "label": "Power" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "DS", "label": "Serial data input" },
+    { "name": "SHCP", "label": "Shift register clock" },
+    { "name": "STCP", "label": "Storage register clock (latch)" },
+    { "name": "OE", "label": "Output enable (active low)" },
+    { "name": "MR", "label": "Master reset (active low)" },
+    { "name": "Q0", "label": "Output 0", "group": "outputs" },
+    { "name": "Q1", "label": "Output 1", "group": "outputs" },
+    { "name": "Q2", "label": "Output 2", "group": "outputs" },
+    { "name": "Q3", "label": "Output 3", "group": "outputs" },
+    { "name": "Q4", "label": "Output 4", "group": "outputs" },
+    { "name": "Q5", "label": "Output 5", "group": "outputs" },
+    { "name": "Q6", "label": "Output 6", "group": "outputs" },
+    { "name": "Q7", "label": "Output 7", "group": "outputs" },
+    { "name": "Q7S", "label": "Serial output (to next chip's DS)" }
+  ]
+}

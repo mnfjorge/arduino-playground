@@ -1,0 +1,11 @@
+{
+  "type": "potentiometer",
+  "label": "Potentiometer",
+  "category": "passive",
+  "description": "Generic 3-terminal potentiometer, e.g. for manual LCD contrast or volume adjustment.",
+  "pins": [
+    { "name": "T1", "label": "Terminal 1" },
+    { "name": "WIPER", "label": "Wiper (signal output)" },
+    { "name": "T2", "label": "Terminal 2" }
+  ]
+}

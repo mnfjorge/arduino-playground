@@ -1,0 +1,10 @@
+{
+  "type": "thermistor",
+  "label": "NTC Thermistor",
+  "category": "sensor",
+  "description": "Generic 2-pin NTC thermistor (e.g. 100k EPCOS/Semitec), for use as a standalone temperature probe wired to a voltage divider.",
+  "pins": [
+    { "name": "T1", "label": "Terminal 1" },
+    { "name": "T2", "label": "Terminal 2" }
+  ]
+}

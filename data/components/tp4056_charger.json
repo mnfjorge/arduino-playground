@@ -1,0 +1,14 @@
+{
+  "type": "tp4056_charger",
+  "label": "TP4056 Li-Ion Charger Module",
+  "category": "power",
+  "description": "Single-cell Li-ion/LiPo charging module with USB input and battery protection, e.g. for charging an 18650 cell from USB.",
+  "pins": [
+    { "name": "IN+", "label": "USB charging input +", "group": "input" },
+    { "name": "IN-", "label": "USB charging input -", "group": "input" },
+    { "name": "BAT+", "label": "Battery cell +", "group": "battery" },
+    { "name": "BAT-", "label": "Battery cell -", "group": "battery" },
+    { "name": "OUT+", "label": "Protected load output +", "group": "output" },
+    { "name": "OUT-", "label": "Protected load output -", "group": "output" }
+  ]
+}

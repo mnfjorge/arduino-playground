@@ -1,0 +1,21 @@
+{
+  "type": "dc_motor_driver_l298n",
+  "label": "L298N Dual H-Bridge Motor Driver",
+  "category": "driver",
+  "description": "Dual H-bridge module for driving two DC motors (or one bipolar stepper) with direction and PWM speed control.",
+  "pins": [
+    { "name": "VCC", "label": "Motor supply power", "group": "power" },
+    { "name": "GND", "label": "Ground (shared logic/motor)", "group": "power" },
+    { "name": "5V", "label": "Logic 5V", "group": "power" },
+    { "name": "IN1", "label": "Motor A control input 1", "group": "control" },
+    { "name": "IN2", "label": "Motor A control input 2", "group": "control" },
+    { "name": "IN3", "label": "Motor B control input 1", "group": "control" },
+    { "name": "IN4", "label": "Motor B control input 2", "group": "control" },
+    { "name": "ENA", "label": "Motor A enable/PWM speed", "group": "control" },
+    { "name": "ENB", "label": "Motor B enable/PWM speed", "group": "control" },
+    { "name": "OUT1", "label": "Motor A output +", "group": "outputs" },
+    { "name": "OUT2", "label": "Motor A output -", "group": "outputs" },
+    { "name": "OUT3", "label": "Motor B output +", "group": "outputs" },
+    { "name": "OUT4", "label": "Motor B output -", "group": "outputs" }
+  ]
+}

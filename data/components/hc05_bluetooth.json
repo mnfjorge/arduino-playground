@@ -1,0 +1,14 @@
+{
+  "type": "hc05_bluetooth",
+  "label": "HC-05 Bluetooth Module",
+  "category": "expansion",
+  "description": "Classic Bluetooth serial (SPP) module, UART interface.",
+  "pins": [
+    { "name": "VCC", "label": "Power (3.3V-5V)" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "TXD", "label": "UART transmit" },
+    { "name": "RXD", "label": "UART receive (needs level shift from 5V)" },
+    { "name": "STATE", "label": "Connection state output" },
+    { "name": "EN", "label": "Enable / AT mode key" }
+  ]
+}

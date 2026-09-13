@@ -1,0 +1,13 @@
+{
+  "type": "rtc_module",
+  "label": "Real-Time Clock Module (DS3231)",
+  "category": "expansion",
+  "description": "Battery-backed real-time clock breakout, I2C interface.",
+  "pins": [
+    { "name": "VCC", "label": "Power (3.3V-5V)" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "SCL", "label": "I2C clock" },
+    { "name": "SDA", "label": "I2C data" },
+    { "name": "SQW", "label": "Square wave/interrupt output" }
+  ]
+}

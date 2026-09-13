@@ -1,0 +1,14 @@
+{
+  "type": "mosfet_module",
+  "label": "Logic-Level MOSFET Switch Module",
+  "category": "actuator",
+  "description": "Breakout board (e.g. IRLB8721-based) for switching a high-current DC load, such as a heater or fan, from a microcontroller's PWM pin.",
+  "pins": [
+    { "name": "SIG", "label": "PWM/logic control input", "group": "control" },
+    { "name": "SIG_GND", "label": "Control ground", "group": "control" },
+    { "name": "V+", "label": "Load supply +", "group": "load" },
+    { "name": "V-", "label": "Load supply -", "group": "load" },
+    { "name": "OUT+", "label": "Switched output +", "group": "load" },
+    { "name": "OUT-", "label": "Switched output -", "group": "load" }
+  ]
+}

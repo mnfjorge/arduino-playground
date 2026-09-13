@@ -1,0 +1,10 @@
+{
+  "type": "barrel_jack",
+  "label": "DC Barrel Jack",
+  "category": "connector",
+  "description": "Generic DC power barrel jack connector.",
+  "pins": [
+    { "name": "VCC", "label": "Center pin (+)" },
+    { "name": "GND", "label": "Sleeve (-)" }
+  ]
+}

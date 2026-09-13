@@ -1,0 +1,10 @@
+{
+  "type": "dc_motor",
+  "label": "DC Motor",
+  "category": "actuator",
+  "description": "Generic 2-wire brushed DC motor, typically driven through a motor driver or relay rather than directly from a microcontroller pin.",
+  "pins": [
+    { "name": "T1", "label": "Terminal 1" },
+    { "name": "T2", "label": "Terminal 2" }
+  ]
+}

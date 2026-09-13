@@ -1,0 +1,11 @@
+{
+  "type": "pir_motion_sensor",
+  "label": "PIR Motion Sensor",
+  "category": "sensor",
+  "description": "Passive infrared motion detector module (e.g. HC-SR501), digital output goes high when motion is detected.",
+  "pins": [
+    { "name": "VCC", "label": "Power (5V)" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "OUT", "label": "Motion detected output" }
+  ]
+}

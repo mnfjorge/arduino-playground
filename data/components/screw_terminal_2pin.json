@@ -1,0 +1,10 @@
+{
+  "type": "screw_terminal_2pin",
+  "label": "2-Pin Screw Terminal Block",
+  "category": "connector",
+  "description": "Generic 2-position screw terminal block, e.g. for joining a power supply's DC output to downstream wiring.",
+  "pins": [
+    { "name": "T1", "label": "Terminal 1" },
+    { "name": "T2", "label": "Terminal 2" }
+  ]
+}
