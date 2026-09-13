@@ -59,3 +59,7 @@ A Blob store is provisioned as either public or private, and reads/writes must d
 Component placement and canvas size are computed automatically — the diagram JSON only describes structure (see `schema/diagram.schema.json`), not layout.
 
 Point an MCP client at `POST /api/mcp` (e.g. `http://localhost:3000/api/mcp` locally). Set `APP_URL` so the URLs `render_diagram` returns are correct outside of a Vercel deployment (see `.env.example`).
+
+### Rendering and fonts
+
+`lib/diagram/render.ts` builds an SVG from the diagram layout and rasterizes it with [`@resvg/resvg-js`](https://github.com/thx/resvg-js) rather than `sharp` directly, because serverless runtimes (Vercel included) generally have no system fonts installed — `sharp`'s SVG text rendering goes through fontconfig, so it silently draws empty boxes instead of glyphs there (this can look fine in local development if your machine happens to have fonts). resvg is configured with `loadSystemFonts: false` and explicit font files (`assets/fonts/Geist-{Regular,SemiBold,Bold}.ttf`, [SIL OFL](https://github.com/vercel/geist-font)), so rendering is identical everywhere regardless of what fonts the host has. resvg only outputs PNG, so `sharp` still does the final PNG → JPEG conversion, which doesn't involve fonts.
