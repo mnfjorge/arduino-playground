@@ -1,0 +1,11 @@
+{
+  "type": "filament_runout_sensor",
+  "label": "Filament Runout Sensor",
+  "category": "3d-printer",
+  "description": "Mechanical filament-presence switch, wired the same way as an endstop and used to pause a print when filament runs out.",
+  "pins": [
+    { "name": "SIG", "label": "Signal" },
+    { "name": "VCC", "label": "Power" },
+    { "name": "GND", "label": "Ground" }
+  ]
+}

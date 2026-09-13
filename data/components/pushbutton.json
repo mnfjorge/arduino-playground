@@ -1,0 +1,10 @@
+{
+  "type": "pushbutton",
+  "label": "Momentary Pushbutton",
+  "category": "sensor",
+  "description": "Generic 2-pin momentary pushbutton switch.",
+  "pins": [
+    { "name": "T1", "label": "Terminal 1" },
+    { "name": "T2", "label": "Terminal 2" }
+  ]
+}

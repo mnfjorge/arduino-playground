@@ -1,0 +1,11 @@
+{
+  "type": "ds18b20",
+  "label": "DS18B20 Digital Temperature Probe",
+  "category": "sensor",
+  "description": "Waterproof digital temperature probe using the 1-Wire protocol. Commonly used for water-cooling loops or as an alternative bed/hotend probe.",
+  "pins": [
+    { "name": "VCC", "label": "Power (3V-5.5V)" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "DQ", "label": "1-Wire data (needs pull-up)" }
+  ]
+}

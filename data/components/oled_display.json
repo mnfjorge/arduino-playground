@@ -1,0 +1,12 @@
+{
+  "type": "oled_display",
+  "label": "OLED Display (SSD1306, I2C)",
+  "category": "display",
+  "description": "Small I2C OLED display module (e.g. 128x64 SSD1306), a compact alternative to the character LCD.",
+  "pins": [
+    { "name": "VCC", "label": "Power (3.3V-5V)" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "SCL", "label": "I2C clock" },
+    { "name": "SDA", "label": "I2C data" }
+  ]
+}

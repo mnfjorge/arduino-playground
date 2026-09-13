@@ -1,0 +1,12 @@
+{
+  "type": "photoresistor",
+  "label": "Photoresistor Module (LDR)",
+  "category": "sensor",
+  "description": "Light-dependent resistor breakout with onboard comparator, exposing both the digital threshold output and the raw analog reading.",
+  "pins": [
+    { "name": "VCC", "label": "Power" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "AO", "label": "Analog output" },
+    { "name": "DO", "label": "Digital threshold output" }
+  ]
+}

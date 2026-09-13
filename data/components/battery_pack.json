@@ -1,0 +1,10 @@
+{
+  "type": "battery_pack",
+  "label": "Battery Pack",
+  "category": "power",
+  "description": "Generic 2-terminal battery pack (e.g. Li-ion 18650 holder or alkaline pack), a simpler alternative to power_supply for battery-powered projects.",
+  "pins": [
+    { "name": "+", "label": "Positive terminal" },
+    { "name": "-", "label": "Negative terminal" }
+  ]
+}

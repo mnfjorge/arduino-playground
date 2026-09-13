@@ -1,0 +1,12 @@
+{
+  "type": "bltouch",
+  "label": "BLTouch Auto Bed-Leveling Probe",
+  "category": "3d-printer",
+  "description": "Servo-based auto bed-leveling probe. Modeled with its control signal and separate probe-triggered signal, as wired to a controller board.",
+  "pins": [
+    { "name": "VCC", "label": "Power (5V)" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "CTRL", "label": "Servo control signal (deploy/stow)" },
+    { "name": "ZPROBE", "label": "Probe-triggered signal (to Z-min endstop input)" }
+  ]
+}

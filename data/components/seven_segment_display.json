@@ -1,0 +1,17 @@
+{
+  "type": "seven_segment_display",
+  "label": "7-Segment Display (single digit)",
+  "category": "display",
+  "description": "Single-digit common-cathode 7-segment display module.",
+  "pins": [
+    { "name": "A", "label": "Segment A", "group": "segments" },
+    { "name": "B", "label": "Segment B", "group": "segments" },
+    { "name": "C", "label": "Segment C", "group": "segments" },
+    { "name": "D", "label": "Segment D", "group": "segments" },
+    { "name": "E", "label": "Segment E", "group": "segments" },
+    { "name": "F", "label": "Segment F", "group": "segments" },
+    { "name": "G", "label": "Segment G", "group": "segments" },
+    { "name": "DP", "label": "Decimal point", "group": "segments" },
+    { "name": "COM", "label": "Common cathode" }
+  ]
+}

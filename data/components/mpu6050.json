@@ -1,0 +1,16 @@
+{
+  "type": "mpu6050",
+  "label": "MPU-6050 IMU (Accelerometer/Gyroscope)",
+  "category": "sensor",
+  "description": "6-axis accelerometer/gyroscope breakout, I2C interface. Used for input-shaper resonance measurement on some 3D printers.",
+  "pins": [
+    { "name": "VCC", "label": "Power (3.3V-5V)" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "SCL", "label": "I2C clock" },
+    { "name": "SDA", "label": "I2C data" },
+    { "name": "XDA", "label": "Auxiliary I2C data" },
+    { "name": "XCL", "label": "Auxiliary I2C clock" },
+    { "name": "AD0", "label": "I2C address select" },
+    { "name": "INT", "label": "Interrupt output" }
+  ]
+}

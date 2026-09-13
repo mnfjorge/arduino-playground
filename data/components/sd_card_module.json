@@ -1,0 +1,14 @@
+{
+  "type": "sd_card_module",
+  "label": "SD Card Module",
+  "category": "expansion",
+  "description": "SPI-interface microSD card breakout, used for reading G-code files or logging data.",
+  "pins": [
+    { "name": "VCC", "label": "Power (3.3V-5V)" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "MISO", "label": "SPI master in / slave out" },
+    { "name": "MOSI", "label": "SPI master out / slave in" },
+    { "name": "SCK", "label": "SPI clock" },
+    { "name": "CS", "label": "SPI chip select" }
+  ]
+}

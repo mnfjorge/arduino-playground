@@ -1,0 +1,13 @@
+{
+  "type": "rotary_encoder",
+  "label": "Rotary Encoder Module",
+  "category": "sensor",
+  "description": "Incremental rotary encoder with push-button detent (e.g. KY-040), used for menu navigation on printer LCD controllers.",
+  "pins": [
+    { "name": "VCC", "label": "Power" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "CLK", "label": "Quadrature output A" },
+    { "name": "DT", "label": "Quadrature output B" },
+    { "name": "SW", "label": "Push-button switch" }
+  ]
+}

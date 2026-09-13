@@ -1,0 +1,12 @@
+{
+  "type": "hc_sr04",
+  "label": "HC-SR04 Ultrasonic Distance Sensor",
+  "category": "sensor",
+  "description": "Ultrasonic ranging module with separate trigger and echo pins.",
+  "pins": [
+    { "name": "VCC", "label": "Power (5V)" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "TRIG", "label": "Trigger pulse input" },
+    { "name": "ECHO", "label": "Echo pulse output" }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "type": "led",
+  "label": "LED",
+  "category": "actuator",
+  "description": "Generic single-color LED. Assumes an external series resistor is present in the wiring, as is standard practice.",
+  "pins": [
+    { "name": "ANODE", "label": "Anode (+)" },
+    { "name": "CATHODE", "label": "Cathode (-)" }
+  ]
+}

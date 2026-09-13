@@ -1,0 +1,11 @@
+{
+  "type": "neopixel_strip",
+  "label": "Addressable LED Strip (WS2812/NeoPixel)",
+  "category": "display",
+  "description": "Addressable RGB LED strip driven by a single-wire data protocol, commonly used for printer status/ambient lighting.",
+  "pins": [
+    { "name": "VCC", "label": "Power (5V)" },
+    { "name": "GND", "label": "Ground" },
+    { "name": "DIN", "label": "Data input" }
+  ]
+}
