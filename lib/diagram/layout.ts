@@ -11,6 +11,15 @@ const CHARS_TO_PX = 7;
 // placed out here (not on the box edge) so a wire's routing - and its first
 // bend - starts with real clearance from the component instead of hugging it.
 const PIN_STUB = 28;
+// Approx glyph width for the 10px monospace font pin labels render in
+// (see PIN_LABEL_GAP in render.ts / component-node.tsx, which this mirrors).
+const PIN_LABEL_CHAR_PX = 6;
+const PIN_LABEL_GAP = 6;
+// Extra room past a label's own text before another component's wire may
+// route through - without this, ELK (which only knows about the component's
+// box, not the label sitting past its pin stubs) can legally draw another
+// wire's bend straight across the label.
+const PIN_LABEL_CLEARANCE = 6;
 
 export type PinSide = "WEST" | "EAST";
 
@@ -64,6 +73,17 @@ function estimateNodeWidth(label: string, pinLabels: string[]): number {
 
 function nodeHeight(westCount: number, eastCount: number): number {
   return Math.max(MIN_NODE_HEIGHT, Math.max(westCount, eastCount) * PIN_SPACING + NODE_PADDING * 2);
+}
+
+/**
+ * How far a side's pin labels reach out past PIN_STUB - the width ELK needs
+ * to treat as part of this node's footprint so its own edgeNode spacing
+ * keeps *other* components' wires from routing across the label text. 0 when
+ * the side has no pins, which keeps that side's margin at plain PIN_STUB.
+ */
+function pinLabelReach(pins: ComponentPin[]): number {
+  const widest = pins.reduce((max, pin) => Math.max(max, pin.name.length * PIN_LABEL_CHAR_PX), 0);
+  return widest === 0 ? 0 : PIN_LABEL_GAP + widest + PIN_LABEL_CLEARANCE;
 }
 
 /**
@@ -162,6 +182,13 @@ export async function layoutDiagram(diagram: Diagram): Promise<DiagramLayout> {
   const centers = await estimateComponentCenters(diagram);
   const elk = new ELK();
 
+  // Populated per-node below, then used once layout comes back to (a) know
+  // which side each pin resolved to without re-deriving it from geometry,
+  // and (b) recover the visible box's x/width from the wider footprint ELK
+  // was actually given (see pinLabelReach above).
+  const pinSides = new Map<string, PinSide>();
+  const nodeBoxes = new Map<string, { coreWidth: number; westMargin: number }>();
+
   const elkNodes: ElkNode[] = diagram.components.map((component) => {
     const definition = getComponentDefinition(component.type);
     if (!definition) {
@@ -173,15 +200,27 @@ export async function layoutDiagram(diagram: Diagram): Promise<DiagramLayout> {
       sides.set(pin.name, choosePinSide(component.id, pin.name, diagram, centers, index));
     });
 
+    definition.pins.forEach((pin) => {
+      pinSides.set(pinId(component.id, pin.name), sides.get(pin.name) ?? "EAST");
+    });
+
     const west = definition.pins.filter((pin) => sides.get(pin.name) === "WEST");
     const east = definition.pins.filter((pin) => sides.get(pin.name) === "EAST");
     const label = component.label ?? definition.label;
 
     const height = nodeHeight(west.length, east.length);
-    const width = estimateNodeWidth(
+    const coreWidth = estimateNodeWidth(
       label,
       definition.pins.map((pin) => pin.label ?? pin.name),
     );
+
+    // Each side's margin is PIN_STUB plus room for that side's own pin
+    // labels - folding the label footprint into the node's declared width so
+    // ELK's edgeNode spacing keeps other components' wires clear of it too.
+    const westMargin = PIN_STUB + pinLabelReach(west);
+    const eastMargin = PIN_STUB + pinLabelReach(east);
+    const width = westMargin + coreWidth + eastMargin;
+    nodeBoxes.set(component.id, { coreWidth, westMargin });
 
     const sidePins = (pins: ComponentPin[], side: PinSide) =>
       pins.map((pin, index) => ({
@@ -189,8 +228,9 @@ export async function layoutDiagram(diagram: Diagram): Promise<DiagramLayout> {
         width: 1,
         height: 1,
         // FIXED_POS below means these coordinates are taken as-is: y is spread
-        // evenly down the box's interior, x sits PIN_STUB outside the box edge.
-        x: side === "WEST" ? -PIN_STUB : width + PIN_STUB,
+        // evenly down the box's interior, x sits PIN_STUB outside the (core)
+        // box edge - westMargin/eastMargin already include that PIN_STUB.
+        x: side === "WEST" ? westMargin - PIN_STUB : westMargin + coreWidth + PIN_STUB,
         y: NODE_PADDING + ((index + 0.5) / pins.length) * (height - NODE_PADDING * 2),
       }));
 
@@ -242,11 +282,12 @@ export async function layoutDiagram(diagram: Diagram): Promise<DiagramLayout> {
     const pinByName = new Map(definition.pins.map((pin) => [pin.name, pin]));
     const nodeX = node.x ?? 0;
     const nodeY = node.y ?? 0;
+    const box = nodeBoxes.get(component.id) ?? { coreWidth: node.width ?? MIN_NODE_WIDTH, westMargin: 0 };
 
     const pins: LayoutPin[] = (node.ports ?? []).map((port) => {
       const pinName = port.id.slice(pinId(component.id, "").length);
       const pinDef = pinByName.get(pinName);
-      const side: PinSide = (port.x ?? 0) < 0 ? "WEST" : "EAST";
+      const side: PinSide = pinSides.get(port.id) ?? "EAST";
       return {
         name: pinDef?.name ?? pinName,
         label: pinDef?.label,
@@ -260,9 +301,12 @@ export async function layoutDiagram(diagram: Diagram): Promise<DiagramLayout> {
       componentId: component.id,
       type: component.type,
       label: component.label ?? definition.label,
-      x: nodeX,
+      // node.width from ELK is the widened footprint (core box + label
+      // margins on each side, see pinLabelReach) - the visible box is just
+      // the core, offset in by westMargin.
+      x: nodeX + box.westMargin,
       y: nodeY,
-      width: node.width ?? MIN_NODE_WIDTH,
+      width: box.coreWidth,
       height: node.height ?? MIN_NODE_HEIGHT,
       pins,
     };
