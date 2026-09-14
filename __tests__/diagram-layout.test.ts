@@ -87,6 +87,30 @@ describe("layoutDiagram", () => {
     expect(sideOf("psu-1", "DC+")).toBe("EAST");
   });
 
+  test("lays out a component defined only by an inline definition", async () => {
+    const withEphemeral: Diagram = {
+      id: diagram.id,
+      components: [
+        { id: "mcu-1", type: "esp32" },
+        {
+          id: "x1",
+          type: "bmp280",
+          definition: {
+            label: "BMP280 Pressure Sensor",
+            category: "sensor",
+            pins: [{ name: "VCC" }, { name: "GND" }, { name: "SDA" }, { name: "SCL" }],
+          },
+        },
+      ],
+      connections: [{ from: { component: "x1", pin: "SDA" }, to: { component: "mcu-1", pin: "D4" } }],
+    };
+
+    const layout = await layoutDiagram(withEphemeral);
+    const node = layout.nodes.find((n) => n.componentId === "x1")!;
+    expect(node.label).toBe("BMP280 Pressure Sensor");
+    expect(node.pins.map((p) => p.name).sort()).toEqual(["GND", "SCL", "SDA", "VCC"]);
+  });
+
   test("throws a clear error for an unknown component type", async () => {
     const bad: Diagram = {
       id: diagram.id,

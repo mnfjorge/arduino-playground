@@ -2,16 +2,23 @@ import Ajv2020, { type AnySchemaObject } from "ajv/dist/2020";
 import addFormats from "ajv-formats";
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { getComponentDefinition } from "../components/registry";
+import { collectEphemeralDefinitions, resolveDefinition } from "./definitions";
 import type { Diagram } from "./types";
 
 const ajv = new Ajv2020({ allErrors: true, strict: true });
 addFormats(ajv);
 
+const componentDefinitionSchema = JSON.parse(
+  readFileSync(path.join(process.cwd(), "schema/component-definition.schema.json"), "utf8"),
+) as AnySchemaObject;
+
 const diagramSchema = JSON.parse(
   readFileSync(path.join(process.cwd(), "schema/diagram.schema.json"), "utf8"),
 ) as AnySchemaObject;
 
+// diagramSchema's per-component "definition" property $refs into this schema
+// (by $id), so it must be registered first for those $refs to resolve.
+ajv.addSchema(componentDefinitionSchema);
 const validateSchema = ajv.compile(diagramSchema);
 
 export interface ValidationResult {
@@ -21,9 +28,10 @@ export interface ValidationResult {
 
 /**
  * Validates a diagram against schema/diagram.schema.json, then against
- * things JSON Schema can't express: component types and pins must exist
- * in data/components/*.json, connections must reference components that
- * exist in the same diagram, and component ids must be unique.
+ * things JSON Schema can't express: a component's type must either exist in
+ * data/components/*.json or carry an inline "definition" (validated and
+ * deduped via collectEphemeralDefinitions), connections must reference
+ * components and pins that exist, and component ids must be unique.
  */
 export function validateDiagram(data: unknown): ValidationResult {
   if (!validateSchema(data)) {
@@ -36,14 +44,19 @@ export function validateDiagram(data: unknown): ValidationResult {
   const componentIds = new Set<string>();
   const componentById = new Map(diagram.components.map((c) => [c.id, c]));
 
+  const ephemeral = collectEphemeralDefinitions(diagram);
+  errors.push(...ephemeral.errors);
+
   for (const component of diagram.components) {
     if (componentIds.has(component.id)) {
       errors.push(`Duplicate component id "${component.id}"`);
     }
     componentIds.add(component.id);
 
-    if (!getComponentDefinition(component.type)) {
-      errors.push(`Component "${component.id}" has unknown type "${component.type}". Use list_component_types to see valid types.`);
+    if (!resolveDefinition(component.type, ephemeral.definitions)) {
+      errors.push(
+        `Component "${component.id}" has unknown type "${component.type}". Use list_component_types to see valid types, or include an inline "definition" to create it on the fly for this diagram.`,
+      );
     }
   }
 
@@ -58,7 +71,7 @@ export function validateDiagram(data: unknown): ValidationResult {
         continue;
       }
 
-      const definition = getComponentDefinition(component.type);
+      const definition = resolveDefinition(component.type, ephemeral.definitions);
       if (definition && !definition.pins.some((pin) => pin.name === ref.pin)) {
         const validPins = definition.pins.map((pin) => pin.name).join(", ");
         errors.push(

@@ -62,6 +62,102 @@ describe("validateDiagram", () => {
     expect(result.errors.some((e) => e.includes('Duplicate component id "dup"'))).toBe(true);
   });
 
+  test("accepts an unknown type when given a valid inline definition", () => {
+    const result = validateDiagram({
+      ...baseDiagram,
+      components: [
+        {
+          id: "x1",
+          type: "bmp280",
+          definition: {
+            label: "BMP280 Pressure Sensor",
+            category: "sensor",
+            pins: [{ name: "VCC" }, { name: "GND" }, { name: "SDA" }, { name: "SCL" }],
+          },
+        },
+        { id: "mcu-1", type: "esp32" },
+      ],
+      connections: [{ from: { component: "x1", pin: "SDA" }, to: { component: "mcu-1", pin: "D4" } }],
+    });
+    expect(result).toEqual({ valid: true, errors: [] });
+  });
+
+  test("rejects an inline definition with duplicate pin names", () => {
+    const result = validateDiagram({
+      ...baseDiagram,
+      components: [
+        {
+          id: "x1",
+          type: "bmp280",
+          definition: {
+            label: "BMP280 Pressure Sensor",
+            category: "sensor",
+            pins: [{ name: "VCC" }, { name: "VCC" }],
+          },
+        },
+      ],
+      connections: [],
+    });
+    expect(result.valid).toBe(false);
+    expect(result.errors.some((e) => e.includes("duplicate pin names"))).toBe(true);
+  });
+
+  test("rejects an inline definition that shadows an already-registered type", () => {
+    const result = validateDiagram({
+      ...baseDiagram,
+      components: [
+        {
+          id: "x1",
+          type: "esp32",
+          definition: {
+            label: "Fake ESP32",
+            category: "microcontroller",
+            pins: [{ name: "FOO" }],
+          },
+        },
+      ],
+      connections: [],
+    });
+    expect(result.valid).toBe(false);
+    expect(result.errors.some((e) => e.includes("already registered"))).toBe(true);
+  });
+
+  test("rejects conflicting inline definitions for the same ad-hoc type", () => {
+    const result = validateDiagram({
+      ...baseDiagram,
+      components: [
+        {
+          id: "x1",
+          type: "bmp280",
+          definition: { label: "BMP280", category: "sensor", pins: [{ name: "VCC" }] },
+        },
+        {
+          id: "x2",
+          type: "bmp280",
+          definition: { label: "BMP280", category: "sensor", pins: [{ name: "GND" }] },
+        },
+      ],
+      connections: [],
+    });
+    expect(result.valid).toBe(false);
+    expect(result.errors.some((e) => e.includes("different inline"))).toBe(true);
+  });
+
+  test("rejects an inline definition with an invalid category", () => {
+    const result = validateDiagram({
+      ...baseDiagram,
+      components: [
+        {
+          id: "x1",
+          type: "bmp280",
+          definition: { label: "BMP280", category: "not_a_real_category", pins: [{ name: "VCC" }] },
+        },
+      ],
+      connections: [],
+    });
+    expect(result.valid).toBe(false);
+  });
+
   test("allows multiple connections to share the same pin (e.g. a shared ground)", () => {
     const result = validateDiagram({
       ...baseDiagram,
