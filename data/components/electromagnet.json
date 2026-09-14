@@ -1,0 +1,10 @@
+{
+  "type": "electromagnet",
+  "label": "Electromagnet",
+  "category": "actuator",
+  "description": "Generic 2-wire DC electromagnet coil, typically switched through a relay or MOSFET module rather than directly from a microcontroller pin.",
+  "pins": [
+    { "name": "T1", "label": "Coil terminal 1" },
+    { "name": "T2", "label": "Coil terminal 2" }
+  ]
+}
