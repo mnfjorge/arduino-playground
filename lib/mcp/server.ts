@@ -26,7 +26,14 @@ function diagramSummary(action: string, diagram: DiagramInput) {
 }
 
 export function createDiagramMcpServer(): McpServer {
-  const server = new McpServer({ name: "electronics-diagrams", version: "1.0.0" });
+  const server = new McpServer(
+    { name: "electronics-diagrams", version: "1.0.0" },
+    {
+      instructions:
+        "After calling render_diagram, always share the returned viewUrl with the user in your reply, " +
+        "even when the rendered image is also shown inline — it's the link they need to revisit or share the diagram.",
+    },
+  );
 
   server.registerTool(
     createDiagramTool.name,
