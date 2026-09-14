@@ -45,7 +45,10 @@ function renderNode(node: LayoutNode): string {
     parts.push(
       `<line x1="${boxEdgeX}" y1="${pin.y}" x2="${pin.x}" y2="${pin.y}" stroke="${INK}" stroke-width="2" />`,
       `<circle cx="${pin.x}" cy="${pin.y}" r="3" fill="${INK}" />`,
-      `<text x="${textX}" y="${pin.y + 3}" text-anchor="${anchor}" font-family="${FONT_FAMILY}" font-size="10" fill="${INK}">${escapeXml(pin.name)}</text>`,
+      // Raised above the pin's line (rather than vertically centered on it) so the
+      // connecting wire - which continues straight through at the same y - doesn't
+      // cross through the label text.
+      `<text x="${textX}" y="${pin.y - 6}" text-anchor="${anchor}" font-family="${FONT_FAMILY}" font-size="10" fill="${INK}">${escapeXml(pin.name)}</text>`,
     );
   }
 

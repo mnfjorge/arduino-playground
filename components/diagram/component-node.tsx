@@ -16,6 +16,9 @@ export type ComponentNodeType = Node<ComponentNodeData, "component">;
 
 const PIN_SIZE = 10;
 const PIN_LABEL_GAP = 6;
+// Raise pin labels above the pin's horizontal stub/wire (both sit at pinY)
+// so the wire doesn't visually cross through the label text.
+const PIN_LABEL_RAISE = 9;
 
 export function ComponentNode({ data }: NodeProps<ComponentNodeType>) {
   const { layoutNode, definition, onHoverComponent, onHoverPin, onLeave } = data;
@@ -57,7 +60,7 @@ export function ComponentNode({ data }: NodeProps<ComponentNodeType>) {
                 labelOnWest ? "-translate-x-full text-right" : "text-left"
               }`}
               style={{
-                top: pinY - 5,
+                top: pinY - 5 - PIN_LABEL_RAISE,
                 left: labelOnWest ? pinX - PIN_LABEL_GAP : pinX + PIN_LABEL_GAP,
               }}
             >
