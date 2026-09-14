@@ -21,6 +21,14 @@ const PIN_LABEL_GAP = 6;
 // wire's bend straight across the label.
 const PIN_LABEL_CLEARANCE = 6;
 
+// Minimum distance a routed wire must run straight out from a pin - along the
+// same axis as the pin's own stub - before its first turn. Without this, ELK
+// sometimes bends a wire immediately at the port (since every pin on a side
+// shares that side's x-coordinate, a vertical trunk line fits neatly right
+// through the ports themselves), which reads as the wire ignoring the pin it
+// came from rather than extending away from it.
+const WIRE_EXIT_CLEARANCE = 16;
+
 export type PinSide = "WEST" | "EAST";
 
 export interface LayoutPin {
@@ -169,6 +177,53 @@ function choosePinSide(
   if (westVotes > eastVotes) return "WEST";
   if (eastVotes > westVotes) return "EAST";
   return fallbackIndex % 2 === 0 ? "WEST" : "EAST";
+}
+
+/** Which way a wire should run when leaving/arriving at a pin on this side. */
+function pinExitDirection(side: PinSide): 1 | -1 {
+  return side === "WEST" ? -1 : 1;
+}
+
+/**
+ * If the segment touching `pin` (the array's first point when end is
+ * "start", its last when "end") runs straight vertical, insert points so it
+ * instead runs WIRE_EXIT_CLEARANCE horizontally - in the pin's own exit
+ * direction - before turning. When the segment beyond that already
+ * continues horizontally at the same y, the turn point is simply slid out
+ * to the clearance distance (no extra bend); otherwise a small detour is
+ * added that returns to the pin's exact column before reaching it.
+ */
+function enforcePinExit(
+  points: { x: number; y: number }[],
+  dir: 1 | -1,
+  end: "start" | "end",
+): { x: number; y: number }[] {
+  const pin = end === "start" ? points[0] : points[points.length - 1];
+  const neighbor = end === "start" ? points[1] : points[points.length - 2];
+  if (neighbor.x !== pin.x) return points;
+
+  const beyond = end === "start" ? points[2] : points[points.length - 3];
+  const jogX = pin.x + dir * WIRE_EXIT_CLEARANCE;
+
+  if (beyond && beyond.y === neighbor.y) {
+    const slid = { x: jogX, y: neighbor.y };
+    return end === "start" ? [pin, slid, ...points.slice(2)] : [...points.slice(0, -2), slid, pin];
+  }
+
+  const out = { x: jogX, y: pin.y };
+  const turn = { x: jogX, y: neighbor.y };
+  return end === "start" ? [pin, out, turn, ...points.slice(1)] : [...points.slice(0, -1), turn, out, pin];
+}
+
+/** Applies enforcePinExit at both ends of a routed wire. */
+function enforceHorizontalPinExits(
+  points: { x: number; y: number }[],
+  fromSide: PinSide,
+  toSide: PinSide,
+): { x: number; y: number }[] {
+  if (points.length < 2) return points;
+  const withStartExit = enforcePinExit(points, pinExitDirection(fromSide), "start");
+  return enforcePinExit(withStartExit, pinExitDirection(toSide), "end");
 }
 
 /**
@@ -322,7 +377,9 @@ export async function layoutDiagram(diagram: Diagram): Promise<DiagramLayout> {
     if (!connection) {
       throw new Error(`Layout produced an unexpected edge id "${id}"`);
     }
-    return { id, points, from: connection.from, to: connection.to };
+    const fromSide = pinSides.get(pinId(connection.from.component, connection.from.pin)) ?? "EAST";
+    const toSide = pinSides.get(pinId(connection.to.component, connection.to.pin)) ?? "EAST";
+    return { id, points: enforceHorizontalPinExits(points, fromSide, toSide), from: connection.from, to: connection.to };
   });
 
   return {
