@@ -1,6 +1,4 @@
 import Link from "next/link";
-import { z } from "zod";
-import { toolDefinitions } from "@/lib/mcp/tool-definitions";
 import { getBaseUrl } from "@/lib/site-url";
 
 function CodeBlock({ children }: { children: string }) {
@@ -9,13 +7,6 @@ function CodeBlock({ children }: { children: string }) {
       <code className="font-mono">{children}</code>
     </pre>
   );
-}
-
-function formatParamsSchema(shape: Record<string, z.ZodType>): string {
-  // Every tool's schema repeats the same $schema line; it's identical noise here, not information.
-  const schema = z.toJSONSchema(z.object(shape)) as Record<string, unknown>;
-  delete schema.$schema;
-  return JSON.stringify(schema, null, 2);
 }
 
 export default function Home() {
@@ -45,22 +36,6 @@ export default function Home() {
           <CodeBlock>{`POST ${endpoint}`}</CodeBlock>
           <p className="mt-4 text-zinc-600 dark:text-zinc-400">Example client configuration:</p>
           <CodeBlock>{clientConfig}</CodeBlock>
-        </section>
-
-        <section>
-          <h2 className="text-xl font-semibold">Tools</h2>
-          <div className="mt-4 flex flex-col gap-6">
-            {toolDefinitions.map((tool) => (
-              <div key={tool.name} className="rounded-lg border border-zinc-200 p-5 dark:border-zinc-800">
-                <h3 className="font-mono text-base font-semibold">{tool.name}</h3>
-                <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{tool.description}</p>
-                <p className="mt-4 text-xs font-medium tracking-wide text-zinc-500 uppercase">Parameters</p>
-                <CodeBlock>
-                  {tool.inputShape ? formatParamsSchema(tool.inputShape) : "None"}
-                </CodeBlock>
-              </div>
-            ))}
-          </div>
         </section>
 
         <section>
