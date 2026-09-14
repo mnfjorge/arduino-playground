@@ -60,6 +60,18 @@ Component placement and canvas size are computed automatically — the diagram J
 
 Point an MCP client at `POST /api/mcp` (e.g. `http://localhost:3000/api/mcp` locally). Set `APP_URL` so the URLs `render_diagram` returns are correct outside of a Vercel deployment (see `.env.example`).
 
+### Adding a new component type
+
+Every placeable component (board, sensor, driver, etc.) is a single JSON file in `data/components/`, validated against `schema/component-definition.schema.json`. To add one:
+
+1. Create `data/components/<type>.json` with `type`, `label`, `category`, an optional `description`, and a `pins` array (each pin has a required `name` plus optional `label`/`group`).
+   - `type` must be lowercase `snake_case` and must exactly match the filename (minus `.json`).
+   - `category` must be one of the enum values in the schema (`microcontroller`, `sensor`, `actuator`, `power`, `display`, `3d-printer`, `expansion`, `passive`, `driver`, `connector`).
+   - Pin `name`s must be unique within the file; use `group` to hint at physical layout (e.g. `"left"`/`"right"` header sides) — it's not used for actual layout, just readability.
+   - Use an existing file of a similar kind (e.g. `esp32.json` for another microcontroller board) as a template.
+2. That's it — no registration step. `lib/components/registry.ts` discovers every `data/components/*.json` file at runtime (`readdirSync`), so `list_component_types` and diagram validation pick it up automatically.
+3. Run `npm test` — `__tests__/component-definitions.test.ts` auto-discovers and checks every file in `data/components/` (schema conformance, `type` matching the filename, no duplicate pin names, no duplicate `type` across files), so a new component is covered without writing new tests.
+
 ### Rendering and fonts
 
 `lib/diagram/render.ts` builds an SVG from the diagram layout and rasterizes it with [`@resvg/resvg-js`](https://github.com/thx/resvg-js) rather than `sharp` directly, because serverless runtimes (Vercel included) generally have no system fonts installed — `sharp`'s SVG text rendering goes through fontconfig, so it silently draws empty boxes instead of glyphs there (this can look fine in local development if your machine happens to have fonts). resvg is configured with `loadSystemFonts: false` and explicit font files (`assets/fonts/Geist-{Regular,SemiBold,Bold}.ttf`, [SIL OFL](https://github.com/vercel/geist-font)), so rendering is identical everywhere regardless of what fonts the host has. resvg only outputs PNG, so `sharp` still does the final PNG → JPEG conversion, which doesn't involve fonts.
