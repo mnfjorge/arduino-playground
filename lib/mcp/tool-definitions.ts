@@ -63,7 +63,9 @@ export const renderDiagramTool = {
   name: "render_diagram",
   title: "Render diagram",
   description:
-    "Renders a diagram to a JPEG image and returns it inline plus a public URL (/view/{diagramId}) you can show or link to.",
+    "Renders a diagram to a JPEG image and returns it inline plus a public URL (/view/{diagramId}) you can show or link to. " +
+    "IMPORTANT: After calling this tool, you MUST include the returned viewUrl in your reply to the user, " +
+    "even if you also show the rendered image inline — the user needs the link to revisit or share the diagram.",
   inputShape: renderDiagramInputShape,
 } satisfies ToolDefinition;
 
