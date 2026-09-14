@@ -28,6 +28,12 @@ const PIN_LABEL_CLEARANCE = 6;
 // through the ports themselves), which reads as the wire ignoring the pin it
 // came from rather than extending away from it.
 const WIRE_EXIT_CLEARANCE = 16;
+// Extra horizontal offset between two pins' clearance jogs on the same side
+// of the same component. Without this, every pin on a side shares one x for
+// its jog (see WIRE_EXIT_CLEARANCE), so their wires still visually bundle
+// into a single overlapping line just past the pins instead of running in
+// their own lane - only the sliver right at the port moved.
+const WIRE_LANE_GAP = 4;
 
 export type PinSide = "WEST" | "EAST";
 
@@ -187,21 +193,23 @@ function pinExitDirection(side: PinSide): 1 | -1 {
 /**
  * If the segment touching `pin` (the array's first point when end is
  * "start", its last when "end") runs straight vertical, insert a small
- * detour so it instead runs WIRE_EXIT_CLEARANCE horizontally - in the pin's
- * own exit direction - before turning, then returns to the pin's exact
- * column to rejoin the original path. Every inserted point shares an x or y
- * with its neighbor, so the result stays strictly orthogonal.
+ * detour so it instead runs horizontally - in the pin's own exit direction,
+ * out to WIRE_EXIT_CLEARANCE plus this pin's own lane offset (see
+ * WIRE_LANE_GAP) - before turning, then returns to the pin's exact column
+ * to rejoin the original path. Every inserted point shares an x or y with
+ * its neighbor, so the result stays strictly orthogonal.
  */
 function enforcePinExit(
   points: { x: number; y: number }[],
   dir: 1 | -1,
+  lane: number,
   end: "start" | "end",
 ): { x: number; y: number }[] {
   const pin = end === "start" ? points[0] : points[points.length - 1];
   const neighbor = end === "start" ? points[1] : points[points.length - 2];
   if (neighbor.x !== pin.x) return points;
 
-  const jogX = pin.x + dir * WIRE_EXIT_CLEARANCE;
+  const jogX = pin.x + dir * (WIRE_EXIT_CLEARANCE + lane * WIRE_LANE_GAP);
   const out = { x: jogX, y: pin.y };
   const turn = { x: jogX, y: neighbor.y };
   return end === "start" ? [pin, out, turn, ...points.slice(1)] : [...points.slice(0, -1), turn, out, pin];
@@ -211,11 +219,13 @@ function enforcePinExit(
 function enforceHorizontalPinExits(
   points: { x: number; y: number }[],
   fromSide: PinSide,
+  fromLane: number,
   toSide: PinSide,
+  toLane: number,
 ): { x: number; y: number }[] {
   if (points.length < 2) return points;
-  const withStartExit = enforcePinExit(points, pinExitDirection(fromSide), "start");
-  return enforcePinExit(withStartExit, pinExitDirection(toSide), "end");
+  const withStartExit = enforcePinExit(points, pinExitDirection(fromSide), fromLane, "start");
+  return enforcePinExit(withStartExit, pinExitDirection(toSide), toLane, "end");
 }
 
 /**
@@ -234,6 +244,10 @@ export async function layoutDiagram(diagram: Diagram): Promise<DiagramLayout> {
   // and (b) recover the visible box's x/width from the wider footprint ELK
   // was actually given (see pinLabelReach above).
   const pinSides = new Map<string, PinSide>();
+  // Each pin's index within its own side's pin list (top-to-bottom) - see
+  // WIRE_LANE_GAP, which uses this to keep same-side wires from all sharing
+  // one exit column.
+  const pinLanes = new Map<string, number>();
   const nodeBoxes = new Map<string, { coreWidth: number; westMargin: number }>();
 
   const elkNodes: ElkNode[] = diagram.components.map((component) => {
@@ -253,6 +267,8 @@ export async function layoutDiagram(diagram: Diagram): Promise<DiagramLayout> {
 
     const west = definition.pins.filter((pin) => sides.get(pin.name) === "WEST");
     const east = definition.pins.filter((pin) => sides.get(pin.name) === "EAST");
+    west.forEach((pin, index) => pinLanes.set(pinId(component.id, pin.name), index));
+    east.forEach((pin, index) => pinLanes.set(pinId(component.id, pin.name), index));
     const label = component.label ?? definition.label;
 
     const height = nodeHeight(west.length, east.length);
@@ -369,9 +385,18 @@ export async function layoutDiagram(diagram: Diagram): Promise<DiagramLayout> {
     if (!connection) {
       throw new Error(`Layout produced an unexpected edge id "${id}"`);
     }
-    const fromSide = pinSides.get(pinId(connection.from.component, connection.from.pin)) ?? "EAST";
-    const toSide = pinSides.get(pinId(connection.to.component, connection.to.pin)) ?? "EAST";
-    return { id, points: enforceHorizontalPinExits(points, fromSide, toSide), from: connection.from, to: connection.to };
+    const fromPinId = pinId(connection.from.component, connection.from.pin);
+    const toPinId = pinId(connection.to.component, connection.to.pin);
+    const fromSide = pinSides.get(fromPinId) ?? "EAST";
+    const toSide = pinSides.get(toPinId) ?? "EAST";
+    const fromLane = pinLanes.get(fromPinId) ?? 0;
+    const toLane = pinLanes.get(toPinId) ?? 0;
+    return {
+      id,
+      points: enforceHorizontalPinExits(points, fromSide, fromLane, toSide, toLane),
+      from: connection.from,
+      to: connection.to,
+    };
   });
 
   return {
