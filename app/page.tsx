@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getBaseUrl } from "@/lib/site-url";
 
 function CodeBlock({ children }: { children: string }) {
@@ -36,24 +35,6 @@ export default function Home() {
           <CodeBlock>{`POST ${endpoint}`}</CodeBlock>
           <p className="mt-4 text-zinc-600 dark:text-zinc-400">Example client configuration:</p>
           <CodeBlock>{clientConfig}</CodeBlock>
-        </section>
-
-        <section>
-          <h2 className="text-xl font-semibold">Diagram format</h2>
-          <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-            Diagrams are JSON (see <code className="font-mono text-sm">schema/diagram.schema.json</code>): a list of
-            component instances and pin-to-pin connections. Component placement and wire routing are computed
-            automatically — there&apos;s no canvas or position to configure. Call{" "}
-            <code className="font-mono text-sm">list_component_types</code> first to see every available component
-            type and its pins.
-          </p>
-          <p className="mt-4 text-zinc-600 dark:text-zinc-400">
-            See the{" "}
-            <Link href="/components" className="underline hover:text-zinc-700 dark:hover:text-zinc-300">
-              full list of supported components
-            </Link>{" "}
-            for a human-readable reference.
-          </p>
         </section>
       </main>
     </div>
