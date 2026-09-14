@@ -1,14 +1,41 @@
 import { z } from "zod";
+import componentDefinitionSchema from "../../schema/component-definition.schema.json";
 
 const pinRefShape = {
   component: z.string().min(1).describe("id of a component in this diagram"),
   pin: z.string().min(1).describe("pin name defined by that component's type"),
 };
 
+const componentCategories = componentDefinitionSchema.properties.category.enum as [string, ...string[]];
+
+const inlinePinShape = {
+  name: z.string().min(1).describe("Pin identifier used in connections, e.g. 'GND', 'D1', 'A+'. Unique within this component type."),
+  label: z.string().optional().describe("Optional human-readable pin description, e.g. 'Coil A +'."),
+  group: z.string().optional().describe("Optional grouping hint for readability, e.g. 'X axis'. Not used for layout."),
+};
+
+const inlineDefinitionShape = {
+  label: z.string().min(1).describe("Human-readable display name for this ad-hoc component type, e.g. 'BMP280 Pressure Sensor'."),
+  category: z.enum(componentCategories).describe("Broad grouping; must be one of schema/component-definition.schema.json's category enum."),
+  description: z.string().optional().describe("Optional free-text notes about this component or modeling decisions/simplifications."),
+  pins: z.array(z.object(inlinePinShape)).min(1).describe("Every pin this component type exposes."),
+};
+
 const componentShape = {
   id: z.string().min(1).describe("Unique id for this component instance within the diagram, e.g. 'esp32-1'"),
-  type: z.string().min(1).describe("Component type key, e.g. 'esp32'. See list_component_types for valid values."),
+  type: z
+    .string()
+    .min(1)
+    .describe(
+      "Component type key, e.g. 'esp32'. See list_component_types for valid values. If the type you need isn't listed, invent a snake_case key and supply 'definition' to create it on the fly for this diagram.",
+    ),
   label: z.string().optional().describe("Optional display label override"),
+  definition: z
+    .object(inlineDefinitionShape)
+    .optional()
+    .describe(
+      "Only needed when 'type' isn't one of the types from list_component_types. Defines that type on the fly, scoped to this diagram, following schema/component-definition.schema.json (its 'type' field is this component's own 'type' above, not repeated here). Every component instance using the same ad-hoc type must supply the same definition.",
+    ),
 };
 
 const connectionShape = {
@@ -47,7 +74,7 @@ export const createDiagramTool = {
   name: "create_diagram",
   title: "Create diagram",
   description:
-    "Creates a new electronics diagram from components and pin-to-pin connections. The caller generates a fresh UUID and passes it as diagramId; fails if that id is already in use. Component placement and wire routing are computed automatically. Call list_component_types first to see valid component types and pins.",
+    "Creates a new electronics diagram from components and pin-to-pin connections. The caller generates a fresh UUID and passes it as diagramId; fails if that id is already in use. Component placement and wire routing are computed automatically. Call list_component_types first to see valid component types and pins — if the component you need isn't there, give it a 'definition' inline to create that type on the fly, scoped to this diagram.",
   inputShape: diagramInputShape,
 } satisfies ToolDefinition;
 
@@ -55,7 +82,7 @@ export const updateDiagramTool = {
   name: "update_diagram",
   title: "Update diagram",
   description:
-    "Replaces the components and connections of an existing diagram (identified by diagramId). Fails if the diagram doesn't exist yet — use create_diagram first. Send the full desired state, not just the changed parts.",
+    "Replaces the components and connections of an existing diagram (identified by diagramId). Fails if the diagram doesn't exist yet — use create_diagram first. Send the full desired state, not just the changed parts. As with create_diagram, a component whose type isn't in list_component_types needs an inline 'definition' to create it on the fly for this diagram.",
   inputShape: diagramInputShape,
 } satisfies ToolDefinition;
 

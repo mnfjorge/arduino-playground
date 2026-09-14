@@ -1,5 +1,6 @@
 import ELK, { type ElkExtendedEdge, type ElkNode } from "elkjs/lib/elk.bundled.js";
-import { getComponentDefinition, type ComponentPin } from "../components/registry";
+import type { ComponentPin } from "../components/registry";
+import { collectEphemeralDefinitions, resolveDefinition } from "./definitions";
 import type { Diagram, DiagramConnection, PinRef } from "./types";
 
 const PIN_SPACING = 24;
@@ -109,9 +110,10 @@ function pinLabelReach(pins: ComponentPin[]): number {
  */
 async function estimateComponentCenters(diagram: Diagram): Promise<Map<string, number>> {
   const elk = new ELK();
+  const ephemeral = collectEphemeralDefinitions(diagram).definitions;
 
   const nodes: ElkNode[] = diagram.components.map((component) => {
-    const definition = getComponentDefinition(component.type);
+    const definition = resolveDefinition(component.type, ephemeral);
     if (!definition) {
       throw new Error(`Unknown component type "${component.type}" for component "${component.id}"`);
     }
@@ -238,6 +240,7 @@ function enforceHorizontalPinExits(
 export async function layoutDiagram(diagram: Diagram): Promise<DiagramLayout> {
   const centers = await estimateComponentCenters(diagram);
   const elk = new ELK();
+  const ephemeral = collectEphemeralDefinitions(diagram).definitions;
 
   // Populated per-node below, then used once layout comes back to (a) know
   // which side each pin resolved to without re-deriving it from geometry,
@@ -251,7 +254,7 @@ export async function layoutDiagram(diagram: Diagram): Promise<DiagramLayout> {
   const nodeBoxes = new Map<string, { coreWidth: number; westMargin: number }>();
 
   const elkNodes: ElkNode[] = diagram.components.map((component) => {
-    const definition = getComponentDefinition(component.type);
+    const definition = resolveDefinition(component.type, ephemeral);
     if (!definition) {
       throw new Error(`Unknown component type "${component.type}" for component "${component.id}"`);
     }
@@ -338,7 +341,7 @@ export async function layoutDiagram(diagram: Diagram): Promise<DiagramLayout> {
     if (!component) {
       throw new Error(`Layout produced an unexpected node id "${node.id}"`);
     }
-    const definition = getComponentDefinition(component.type);
+    const definition = resolveDefinition(component.type, ephemeral);
     if (!definition) {
       throw new Error(`Unknown component type "${component.type}" for component "${component.id}"`);
     }

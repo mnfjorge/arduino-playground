@@ -120,4 +120,53 @@ describe("diagram schema", () => {
 
     expect(validateDiagram(diagram)).toBe(false);
   });
+
+  test("accepts a component with an inline ad-hoc definition", () => {
+    const diagram = {
+      id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      components: [
+        {
+          id: "x1",
+          type: "bmp280",
+          definition: {
+            label: "BMP280 Pressure Sensor",
+            category: "sensor",
+            pins: [{ name: "VCC" }, { name: "GND" }],
+          },
+        },
+      ],
+      connections: [],
+    };
+
+    const valid = validateDiagram(diagram);
+    if (!valid) {
+      throw new Error(`Schema errors:\n${JSON.stringify(validateDiagram.errors, null, 2)}`);
+    }
+  });
+
+  test("rejects an inline definition with an invalid category", () => {
+    const diagram = {
+      id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      components: [
+        {
+          id: "x1",
+          type: "bmp280",
+          definition: { label: "BMP280", category: "not_a_real_category", pins: [{ name: "VCC" }] },
+        },
+      ],
+      connections: [],
+    };
+
+    expect(validateDiagram(diagram)).toBe(false);
+  });
+
+  test("rejects an inline definition missing required fields", () => {
+    const diagram = {
+      id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      components: [{ id: "x1", type: "bmp280", definition: { label: "BMP280" } }],
+      connections: [],
+    };
+
+    expect(validateDiagram(diagram)).toBe(false);
+  });
 });

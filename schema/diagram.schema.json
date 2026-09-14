@@ -43,6 +43,18 @@
         "label": {
           "type": "string",
           "description": "Optional display label override, e.g. 'X-axis endstop'."
+        },
+        "definition": {
+          "type": "object",
+          "description": "Defines a brand-new component type on the fly, scoped to this diagram only. Required when 'type' isn't one of the types returned by list_component_types. Mirrors schema/component-definition.schema.json, minus 'type' (supplied by this component's own 'type' field above).",
+          "required": ["label", "category", "pins"],
+          "additionalProperties": false,
+          "properties": {
+            "label": { "$ref": "https://arduino-playground.local/schema/component-definition.schema.json#/properties/label" },
+            "category": { "$ref": "https://arduino-playground.local/schema/component-definition.schema.json#/properties/category" },
+            "description": { "$ref": "https://arduino-playground.local/schema/component-definition.schema.json#/properties/description" },
+            "pins": { "$ref": "https://arduino-playground.local/schema/component-definition.schema.json#/properties/pins" }
+          }
         }
       }
     },
