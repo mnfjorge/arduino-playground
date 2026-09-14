@@ -186,12 +186,11 @@ function pinExitDirection(side: PinSide): 1 | -1 {
 
 /**
  * If the segment touching `pin` (the array's first point when end is
- * "start", its last when "end") runs straight vertical, insert points so it
- * instead runs WIRE_EXIT_CLEARANCE horizontally - in the pin's own exit
- * direction - before turning. When the segment beyond that already
- * continues horizontally at the same y, the turn point is simply slid out
- * to the clearance distance (no extra bend); otherwise a small detour is
- * added that returns to the pin's exact column before reaching it.
+ * "start", its last when "end") runs straight vertical, insert a small
+ * detour so it instead runs WIRE_EXIT_CLEARANCE horizontally - in the pin's
+ * own exit direction - before turning, then returns to the pin's exact
+ * column to rejoin the original path. Every inserted point shares an x or y
+ * with its neighbor, so the result stays strictly orthogonal.
  */
 function enforcePinExit(
   points: { x: number; y: number }[],
@@ -202,14 +201,7 @@ function enforcePinExit(
   const neighbor = end === "start" ? points[1] : points[points.length - 2];
   if (neighbor.x !== pin.x) return points;
 
-  const beyond = end === "start" ? points[2] : points[points.length - 3];
   const jogX = pin.x + dir * WIRE_EXIT_CLEARANCE;
-
-  if (beyond && beyond.y === neighbor.y) {
-    const slid = { x: jogX, y: neighbor.y };
-    return end === "start" ? [pin, slid, ...points.slice(2)] : [...points.slice(0, -2), slid, pin];
-  }
-
   const out = { x: jogX, y: pin.y };
   const turn = { x: jogX, y: neighbor.y };
   return end === "start" ? [pin, out, turn, ...points.slice(1)] : [...points.slice(0, -1), turn, out, pin];
